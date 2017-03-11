@@ -1,0 +1,37 @@
+
+###SIMULATOR
+entities - technicians, computers
+environment
+view
+step
+
+###ENVIRONMENT
+width and height
+field for entities
+
+###ENTITY
+isalive
+location - y and x
+environment
+
+###TECHNICIAN
+shift length
+max skill level
+max time for repairs
+max age
+productivity - affects repairs, lowers with time on shift
+skill - affects time needed to repair
+isavailable - if he's repairing or free
+age
+work log - what is he doing, for how long etc
+
+###COMPUTER
+error probability
+max priority
+max difficulty
+max age
+state - working or not working
+priority
+difficulty - affect time needed for repair
+isassigned - is somebody going to work on it
+age
