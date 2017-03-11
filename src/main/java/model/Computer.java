@@ -5,11 +5,12 @@ import java.util.Random;
 /**
  * Created by Mish.k.a on 11. 3. 2017.
  */
-public class Computer extends Entity {
+public class Computer extends Entity implements Comparable {
 
     private static final Random rand = Randomizer.getRandom();
     private static final int PRIORITY_MAX = 10;
-    private static final int AGE_MAX = 20;
+    private static final int AGE_MAX = 40;
+    private static final int RETIREMENT = 2;
     private static final double MALFUNCTION_PROBABILITY = 0.4;
 
     private boolean working;
@@ -61,7 +62,7 @@ public class Computer extends Entity {
     }
 
     public boolean isRepairable() {
-        return age <= AGE_MAX;
+        return (age - RETIREMENT) <= AGE_MAX;
     }
 
     public void repair() {
@@ -79,4 +80,14 @@ public class Computer extends Entity {
         return priority;
     }
 
+    @Override
+    public int compareTo(Object obj) {
+        if(obj instanceof Computer) {
+            Computer comp = (Computer) obj;
+            return Integer.compare(getPriority(), comp.getPriority());
+        }
+        else {
+            return -1;
+        }
+    }
 }

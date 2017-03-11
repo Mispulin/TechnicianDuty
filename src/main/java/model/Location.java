@@ -35,4 +35,8 @@ public class Location {
         return col;
     }
 
+    public Location diff(Location location) {
+        return new Location(row - location.getRow(), col - location.getCol());
+    }
+
 }

@@ -11,14 +11,16 @@ public class Technician extends Entity {
 
     private static final Random rand = Randomizer.getRandom();
     private static final int AGE_MAX = 45;
+    private static final double REPAIR_PROBABILITY = 0.4;
 
     private int age;
     private boolean available;
-    private Location workPlace;
+    private Location home;
+    private Computer assignment;
     private List<LogMessage> log;
 
-    public Technician(String name, Environment environment, Location workPlace) {
-        super(name, environment, workPlace);
+    public Technician(String name, Environment environment, Location home) {
+        super(name, environment, home);
         age = rand.nextInt(AGE_MAX - 1) + 1;
         available = true;
         log = new ArrayList<LogMessage>();
@@ -30,6 +32,10 @@ public class Technician extends Entity {
 
     public boolean isAvailable() {
         return available;
+    }
+
+    public Computer getAssignment() {
+        return assignment;
     }
 
     public void log(LogMessage log) {
@@ -45,43 +51,87 @@ public class Technician extends Entity {
         ageUp();
         if (isAlive()) {
             if (isAvailable()) {
-                go();
+                goHome();
+            } else {
+                goWork();
+                doWork();
             }
         }
     }
 
     private void ageUp() {
         age++;
-        if(age > AGE_MAX) {
+        if (age > AGE_MAX) {
+            report("I'm too old for this - bye!");
             die();
         }
     }
 
     public void assign(Computer computer) {
-        workPlace = computer.getLocation();
+        assignment = computer;
+        report("Got an assignment, bummer...");
     }
 
-    private void go() {
-        if(!isAt()) {
-            if((getLocation().getRow() == workPlace.getRow()) && (getLocation().getCol() < workPlace.getCol())){
-                goRight();
-            } else if((getLocation().getRow() == workPlace.getRow()) && (getLocation().getCol() > workPlace.getCol())){
-                goLeft();
-            } else if((getLocation().getCol() == workPlace.getCol()) && (getLocation().getRow() < workPlace.getRow())) {
-                goUp();
-            } else if((getLocation().getCol() == workPlace.getCol()) && (getLocation().getRow() > workPlace.getRow())) {
-                goDown();
+    private void report(String message) {
+        log.add(new LogMessage(this, message));
+    }
+
+    private void go(Location location) {
+        if (!isAt(location)) {
+            if ((getLocation().getRow() == location.getRow())) {
+                if (getLocation().getCol() < location.getCol()) {
+                    goRight();
+                } else {
+                    goLeft();
+                }
+            } else if ((getLocation().getCol() == location.getCol())) {
+                if (getLocation().getRow() < location.getRow()) {
+                    goUp();
+                } else {
+                    goDown();
+                }
+            } else {
+                // not the same row or column so pick the lower distance and then the higher
+                Location diff = getLocation().diff(location);
+
             }
+        } else {
+            report("Arrived finally.");
         }
     }
 
-    private boolean isAt() {
-        boolean above = workPlace.getRow() - 1 == getLocation().getRow();
-        boolean under = workPlace.getRow() + 1 == getLocation().getRow();
-        boolean left = workPlace.getCol() - 1 == getLocation().getCol();
-        boolean right = workPlace.getCol() + 1 == getLocation().getCol();
-        boolean horizontal = (left || right) && (workPlace.getRow() == getLocation().getRow());
-        boolean vertical = (above || under) && (workPlace.getCol() == getLocation().getCol());
+    private void doWork() {
+        if (assignment.isRepairable()) {
+            report("Oh, I can repair this.");
+            assignment.repair();
+            report("Succesfully repaired.");
+        } else {
+            report("Terrible condition - I have to replace it.");
+            assignment.replace();
+            report("Good as new.. well, it is new!");
+        }
+        report("Now I'm free.");
+        available = true;
+        assignment = null;
+    }
+
+    private void goHome() {
+        report("Nothing to do - going home.");
+        go(home);
+    }
+
+    private void goWork() {
+        report("Work to do! Gotta get there quickly!");
+        go(assignment.getLocation());
+    }
+
+    private boolean isAt(Location location) {
+        boolean above = location.getRow() - 1 == getLocation().getRow();
+        boolean under = location.getRow() + 1 == getLocation().getRow();
+        boolean left = location.getCol() - 1 == getLocation().getCol();
+        boolean right = location.getCol() + 1 == getLocation().getCol();
+        boolean horizontal = (left || right) && (location.getRow() == getLocation().getRow());
+        boolean vertical = (above || under) && (location.getCol() == getLocation().getCol());
         return (horizontal || vertical);
     }
 
@@ -91,46 +141,21 @@ public class Technician extends Entity {
 
     private void goUp() {
         Location toGo = new Location(getLocation().getRow() - 1, getLocation().getCol());
-        if(hasObstacle(toGo)) {
-            if(toGo.getCol() + 1 <= getEnvironment().getWidth()) {
-                goRight();
-            } else {
-                goLeft();
-            }
-        } else setLocation(toGo);
+        setLocation(toGo);
     }
 
     private void goRight() {
         Location toGo = new Location(getLocation().getRow(), getLocation().getCol() + 1);
-        if(hasObstacle(toGo)) {
-            if(toGo.getRow() + 1 <= getEnvironment().getHeight()) {
-                goDown();
-            } else {
-                goUp();
-            }
-        } else setLocation(toGo);
+        setLocation(toGo);
     }
 
     private void goDown() {
         Location toGo = new Location(getLocation().getRow() + 1, getLocation().getCol());
-        if(hasObstacle(toGo)) {
-            if(toGo.getCol() - 1 >= 0) {
-                goLeft();
-            } else {
-                goRight();
-            }
-        } else setLocation(toGo);
+        setLocation(toGo);
     }
 
     private void goLeft() {
         Location toGo = new Location(getLocation().getRow(), getLocation().getCol() - 1);
-        if(hasObstacle(toGo)) {
-            if(toGo.getRow() - 1 >= 0) {
-                goUp();
-            } else {
-                goDown();
-            }
-        } else setLocation(toGo);
-
+        setLocation(toGo);
     }
 }
