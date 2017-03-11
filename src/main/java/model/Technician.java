@@ -11,27 +11,24 @@ public class Technician extends Entity {
 
     private static final Random rand = Randomizer.getRandom();
     private static final int AGE_MAX = 45;
-    private static final int SKILL_MAX = 10;
 
     private int age;
-    private int skill;
     private boolean available;
     private List<LogMessage> log;
 
     public Technician(String name, Environment environment, Location location) {
         super(name, environment, location);
         age = rand.nextInt(AGE_MAX - 1) + 1;
-        skill = rand.nextInt(SKILL_MAX - 1) + 1;
         available = true;
         log = new ArrayList<LogMessage>();
     }
 
-    public void setSkill(int skill) {
-        this.skill = skill;
-    }
-
     public void setAvailable(boolean available) {
         this.available = available;
+    }
+
+    public boolean isAvailable() {
+        return available;
     }
 
     public void log(LogMessage log) {
@@ -44,7 +41,17 @@ public class Technician extends Entity {
     }
 
     public void act() {
+        ageUp();
+        if (isAlive()) {
 
+        }
+    }
+
+    private void ageUp() {
+        age++;
+        if(age > AGE_MAX) {
+            die();
+        }
     }
 
 }

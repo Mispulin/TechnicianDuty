@@ -23,7 +23,7 @@ public abstract class Entity {
         return alive;
     }
 
-    public void setDead() {
+    public void die() {
         alive = false;
         if(location != null) {
             environment.clear(location);
