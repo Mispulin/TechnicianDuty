@@ -19,7 +19,7 @@ public class Computer extends Entity {
 
     public Computer(String name, Environment environment, Location location) {
         super(name, environment, location);
-        working = rand.nextDouble() < 0.5 ? false : true;
+        working = rand.nextDouble() <= MALFUNCTION_PROBABILITY;
         priority = rand.nextInt(PRIORITY_MAX - 1) + 1;
         assigned = false;
         age = rand.nextInt(AGE_MAX - 1) + 1;

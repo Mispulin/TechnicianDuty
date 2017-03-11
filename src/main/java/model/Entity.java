@@ -40,6 +40,14 @@ public abstract class Entity {
         environment.place(this, newLocation);
     }
 
+    public void setLocation(int row, int col)  {
+        if(location != null) {
+            environment.clear(location);
+        }
+        location = new Location(row, col);
+        environment.place(this, location);
+    }
+
     public String getName() {
         return name;
     }
@@ -48,7 +56,7 @@ public abstract class Entity {
         return location;
     }
 
-    public Environment getField() {
+    public Environment getEnvironment() {
         return environment;
     }
 
