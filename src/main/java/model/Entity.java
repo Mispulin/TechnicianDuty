@@ -1,5 +1,7 @@
 package model;
 
+import java.util.List;
+
 /**
  * Created by Mish.k.a on 11. 3. 2017.
  */
@@ -17,7 +19,11 @@ public abstract class Entity {
         setLocation(location);
     }
 
-    abstract public void act();
+    abstract public void act(List<Entity> entities);
+
+    public void setDead() {
+        alive = false;
+    }
 
     public boolean isAlive() {
         return alive;
@@ -40,6 +46,14 @@ public abstract class Entity {
         environment.place(this, newLocation);
     }
 
+    public void setLocation(int row, int col)  {
+        if(location != null) {
+            environment.clear(location);
+        }
+        location = new Location(row, col);
+        environment.place(this, location);
+    }
+
     public String getName() {
         return name;
     }
@@ -48,7 +62,7 @@ public abstract class Entity {
         return location;
     }
 
-    public Environment getField() {
+    public Environment getEnvironment() {
         return environment;
     }
 

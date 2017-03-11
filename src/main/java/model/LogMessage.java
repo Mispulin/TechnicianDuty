@@ -5,20 +5,17 @@ package model;
  */
 public class LogMessage {
 
-    private int time;
     private Technician technician;
-    private Computer computer;
     private String message;
 
-    public LogMessage(int time, Technician technician, Computer computer, String message) {
-        this.time = time;
+    public LogMessage(Technician technician, String message) {
         this.technician = technician;
-        this.computer = computer;
         this.message = message;
     }
 
     public String toString() {
-        return String.format("%d\\t%s\\t%s\\t%s", time, technician.getName(), computer.getName(), message);
+        String assignment = technician.getAssignment() != null ? technician.getAssignment().getName() : "";
+        return String.format("%-20s %-20s %s", technician.getName(), assignment, message);
     }
 
 }

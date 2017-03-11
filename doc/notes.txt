@@ -11,7 +11,7 @@ field for entities
 
 ###ENTITY
 isalive
-location - y and x
+workPlace - y and x
 environment
 
 ###TECHNICIAN
