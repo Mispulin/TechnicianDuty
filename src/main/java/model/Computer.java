@@ -18,8 +18,8 @@ public class Computer extends Entity {
     private boolean assigned;
     private int age;
 
-    public Computer(Environment environment, Location location) {
-        super(environment, location);
+    public Computer(String name, Environment environment, Location location) {
+        super(name, environment, location);
         working = rand.nextDouble() < 0.5 ? false : true;
         priority = rand.nextInt(PRIORITY_MAX - 1) + 1;
         difficulty = rand.nextInt(DIFFICULTY_MAX - 1) + 1;
@@ -28,7 +28,7 @@ public class Computer extends Entity {
     }
 
     public void act() {
-
+        
     }
 
 }
