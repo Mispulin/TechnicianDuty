@@ -1,5 +1,6 @@
 package model;
 
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -8,10 +9,10 @@ import java.util.Random;
 public class Computer extends Entity implements Comparable {
 
     private static final Random rand = Randomizer.getRandom();
-    private static final int PRIORITY_MAX = 10;
-    private static final int AGE_MAX = 40;
-    private static final int RETIREMENT = 2;
-    private static final double MALFUNCTION_PROBABILITY = 0.4;
+    public static final int PRIORITY_MAX = 10;
+    public static final int AGE_MAX = 40;
+    public static final int RETIREMENT = 2;
+    private static final double MALFUNCTION_PROBABILITY = 0.2;
 
     private boolean working;
     private int priority;
@@ -20,13 +21,13 @@ public class Computer extends Entity implements Comparable {
 
     public Computer(String name, Environment environment, Location location) {
         super(name, environment, location);
-        working = rand.nextDouble() <= MALFUNCTION_PROBABILITY;
-        priority = rand.nextInt(PRIORITY_MAX - 1) + 1;
+        working = rand.nextDouble() > MALFUNCTION_PROBABILITY;
+        priority = 0;
         assigned = false;
         age = rand.nextInt(AGE_MAX - 1) + 1;
     }
 
-    public void act() {
+    public void act(List<Entity> entities) {
         ageUp();
         if (isAlive()) {
             compute();
@@ -36,6 +37,8 @@ public class Computer extends Entity implements Comparable {
     private void ageUp() {
         age++;
         if(age > AGE_MAX) {
+            report("I'm too old, need to be replaced!");
+            setDead();
             working = false;
         }
     }
@@ -43,18 +46,18 @@ public class Computer extends Entity implements Comparable {
     private void compute() {
         if (working) {
             if(rand.nextDouble() <= MALFUNCTION_PROBABILITY) {
-                working = false;
-                report("Oops! Something went wrong.");
+                breakIt();
             } else {
                 report("Working as usual.");
             }
         } else {
             report("Please, repair me!");
+            priority++;
         }
     }
 
     private void report(String message) {
-        System.out.println(String.format("%s\\t%s", getName(), message));
+        System.out.println(String.format("%-13s %-2s %s", getName(), getPriority(), message));
     }
 
     public void assign() {
@@ -62,22 +65,42 @@ public class Computer extends Entity implements Comparable {
     }
 
     public boolean isRepairable() {
-        return (age - RETIREMENT) <= AGE_MAX;
+        return age <= (AGE_MAX - RETIREMENT);
     }
 
     public void repair() {
         working = true;
         assigned = false;
+        report("Yay, I'm okay now!");
     }
 
     public void replace() {
         working = true;
         assigned = false;
         age = 0;
+        report("Yay, someone younger is taking my place!");
     }
 
     public int getPriority() {
         return priority;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void breakIt() {
+        working = false;
+        priority = rand.nextInt(PRIORITY_MAX - 1) + 1;
+        report("Oops! Something went wrong.");
+    }
+
+    public boolean getWorking() {
+        return working;
     }
 
     @Override

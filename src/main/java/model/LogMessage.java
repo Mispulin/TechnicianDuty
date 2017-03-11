@@ -14,7 +14,8 @@ public class LogMessage {
     }
 
     public String toString() {
-        return String.format("%s\\t%s\\t%s", technician.getName(), technician.getAssignment().getName(), message);
+        String assignment = technician.getAssignment() != null ? technician.getAssignment().getName() : "";
+        return String.format("%-20s %-20s %s", technician.getName(), assignment, message);
     }
 
 }

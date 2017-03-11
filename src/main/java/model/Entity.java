@@ -1,5 +1,7 @@
 package model;
 
+import java.util.List;
+
 /**
  * Created by Mish.k.a on 11. 3. 2017.
  */
@@ -17,7 +19,11 @@ public abstract class Entity {
         setLocation(location);
     }
 
-    abstract public void act();
+    abstract public void act(List<Entity> entities);
+
+    public void setDead() {
+        alive = false;
+    }
 
     public boolean isAlive() {
         return alive;

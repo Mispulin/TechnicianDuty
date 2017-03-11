@@ -10,8 +10,8 @@ import java.util.Random;
 public class Technician extends Entity {
 
     private static final Random rand = Randomizer.getRandom();
-    private static final int AGE_MAX = 45;
-    private static final double REPAIR_PROBABILITY = 0.4;
+    public static final int AGE_MAX = 45;
+    private static final double REPAIR_PROBABILITY = 0.3;
 
     private int age;
     private boolean available;
@@ -23,7 +23,8 @@ public class Technician extends Entity {
         super(name, environment, home);
         age = rand.nextInt(AGE_MAX - 1) + 1;
         available = true;
-        log = new ArrayList<LogMessage>();
+        this.home = home;
+        log = new ArrayList<>();
     }
 
     public void setAvailable(boolean available) {
@@ -47,8 +48,8 @@ public class Technician extends Entity {
         log.forEach(message -> System.out.println(message.toString()));
     }
 
-    public void act() {
-        ageUp();
+    public void act(List<Entity> entities) {
+        ageUp(entities);
         if (isAlive()) {
             if (isAvailable()) {
                 goHome();
@@ -59,21 +60,37 @@ public class Technician extends Entity {
         }
     }
 
-    private void ageUp() {
+    public int getAge() {
+        return age;
+    }
+
+    private void ageUp(List<Entity> entities) {
         age++;
         if (age > AGE_MAX) {
             report("I'm too old for this - bye!");
+            findReplacement(entities);
             die();
         }
     }
 
+    private void findReplacement(List<Entity> entities) {
+        Environment environment = getEnvironment();
+        Location place = getLocation();
+        int number = Integer.valueOf(getName().replaceAll("\\D+","")) + 1;
+        number = Integer.valueOf(getName().substring(getName().lastIndexOf(" ") + 1)) + 1;
+        Technician replacement = new Technician("Technician " + number, getEnvironment(), place);
+        entities.add(replacement);
+    }
+
     public void assign(Computer computer) {
         assignment = computer;
+        available = false;
         report("Got an assignment, bummer...");
     }
 
     private void report(String message) {
         log.add(new LogMessage(this, message));
+        System.out.println(new LogMessage(this, message).toString());
     }
 
     private void go(Location location) {
@@ -96,15 +113,19 @@ public class Technician extends Entity {
 
             }
         } else {
-            report("Arrived finally.");
+            report("I'm here.");
         }
     }
 
     private void doWork() {
         if (assignment.isRepairable()) {
             report("Oh, I can repair this.");
-            assignment.repair();
-            report("Succesfully repaired.");
+            if (rand.nextDouble() <= REPAIR_PROBABILITY) {
+                assignment.repair();
+                report("Succesfully repaired.");
+            } else {
+                report("Well I misjudged the situation, I will need more time.");
+            }
         } else {
             report("Terrible condition - I have to replace it.");
             assignment.replace();
@@ -116,7 +137,7 @@ public class Technician extends Entity {
     }
 
     private void goHome() {
-        report("Nothing to do - going home.");
+        report("Nothing to do - going to my place.");
         go(home);
     }
 
@@ -126,6 +147,9 @@ public class Technician extends Entity {
     }
 
     private boolean isAt(Location location) {
+        if (location.equals(getLocation())) {
+            return true;
+        }
         boolean above = location.getRow() - 1 == getLocation().getRow();
         boolean under = location.getRow() + 1 == getLocation().getRow();
         boolean left = location.getCol() - 1 == getLocation().getCol();
@@ -157,5 +181,9 @@ public class Technician extends Entity {
     private void goLeft() {
         Location toGo = new Location(getLocation().getRow(), getLocation().getCol() - 1);
         setLocation(toGo);
+    }
+
+    public void print() {
+        System.out.println(String.format("%s, stáří: %-5d %s", getName(), getAge(), getLocation().toString()));
     }
 }
