@@ -10,7 +10,11 @@ public interface ServerListener {
 
     void addTechnician(Technician technician);
 
+    void retireTechnician(Technician technician);
+
     void crashNotification(Computer computer);
 
-    void assignedNotification(Computer computer);
+    void assignedNotification(Technician technician, Computer computer);
+
+    void giveUpNotification(Computer computer);
 }

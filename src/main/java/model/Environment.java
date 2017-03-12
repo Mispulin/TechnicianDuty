@@ -12,7 +12,6 @@ import java.util.Random;
  */
 public class Environment {
 
-    // For random locations.
     private static final Random rand = Randomizer.getRandom();
 
     private Entity[][] field;
@@ -87,7 +86,7 @@ public class Environment {
     }
 
     public List<Location> adjacentLocations(Location location)  {
-        assert location != null : "Null location passed to adjacentLocations";
+        assert location != null : "Null location passed to adjacentLocations.";
         List<Location> locations = new LinkedList<Location>();
         if(location != null) {
             int row = location.getRow();

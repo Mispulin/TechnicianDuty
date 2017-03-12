@@ -46,8 +46,6 @@ public abstract class Entity {
         alive = false;
         if(location != null) {
             environment.clear(location);
-            location = null;
-            environment = null;
         }
     }
 

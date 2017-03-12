@@ -19,6 +19,7 @@ public class Computer extends Entity implements Comparable {
     public static final int AGE_MAX = 40;
     public static final int RETIREMENT = 2;
     private static final double MALFUNCTION_PROBABILITY = 0.1;
+    private static int nextId = 1;
 
     private boolean working;
     private int priority;
@@ -35,6 +36,7 @@ public class Computer extends Entity implements Comparable {
         age = rand.nextInt(AGE_MAX - 1) + 1;
         logs = new ArrayList<>();
         addListener(server);
+        nextId++;
     }
 
     public void addListener(ServerListener toAdd) {
@@ -49,11 +51,12 @@ public class Computer extends Entity implements Comparable {
     }
 
     private void ageUp() {
-        age++;
-        if(age > AGE_MAX) {
-            report("I'm too old, need to be replaced!");
-            setDead();
+        if(age == AGE_MAX + 1) {
             working = false;
+            report("I'm too old, need to be replaced!");
+            server.crashNotification(this);
+        } else {
+            age++;
         }
     }
 
@@ -65,11 +68,13 @@ public class Computer extends Entity implements Comparable {
                 report("Working as usual.");
             }
         } else {
-            if (rand.nextDouble() > 0.5) {
-                priority++;
-                report("Please, repair me! I really need it!");
-            } else {
-                report("Please, repair me!");
+            if (isRepairable()) {
+                if (priority <= PRIORITY_MAX && rand.nextDouble() > 0.5) {
+                    priority++;
+                    report("Please, repair me! I really need it!");
+                } else {
+                    report("Please, repair me!");
+                }
             }
         }
     }
@@ -86,7 +91,6 @@ public class Computer extends Entity implements Comparable {
 
     public void assign() {
         assigned = true;
-        server.assignedNotification(this);
     }
 
     public boolean isRepairable() {
@@ -100,12 +104,13 @@ public class Computer extends Entity implements Comparable {
         report("Yay, I'm okay now!");
     }
 
-    public void replace() {
-        working = true;
-        assigned = false;
-        age = 0;
-        priority = 0;
-        report("Yay, someone younger is taking my place!");
+    public void replace(List<Entity> entities) {
+        Location place = getLocation();
+        Computer replacement = new Computer("Computer " + nextId, getEnvironment(), place, server, getReportSelf());
+        replacement.setAge(0);
+        report(String.format("Computer %d is now my replacement.", nextId));
+        entities.add(replacement);
+        die();
     }
 
     public void setPriority(int priority) {

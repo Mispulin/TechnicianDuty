@@ -1,12 +1,14 @@
 package model;
 
 import model.entity.Computer;
+import model.entity.Entity;
 import model.entity.Server;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -64,12 +66,50 @@ public class ComputerTest {
 
     @Test
     public void isReplaced() {
-        Computer computer = new Computer("Computer", environment, new Location(0, 0), server, LOG);
-        computer.breakIt();
-        computer.replace();
-        assertTrue(computer.getWorking());
+        Computer computer = new Computer("Computer 1", environment, new Location(0, 0), server, LOG);
+        List<Entity> entities = new ArrayList<>();
+        entities.add(computer);
+
+        List<Entity> newEntities = new ArrayList<>();
+        computer.replace(newEntities);
+        entities.addAll(newEntities);
+        for(Iterator<Entity> it = entities.iterator(); it.hasNext(); ) {
+            Entity entity = it.next();
+            if(! entity.isAlive()) {
+                it.remove();
+            }
+        }
+        entities.forEach(entity -> entity.print());
+        assertTrue(!entities.contains(computer));
     }
 
+    @Test
+    public void areReplaced() {
+        Computer computer1 = new Computer("Computer 1", environment, new Location(0, 0), server, LOG);
+        Computer computer2 = new Computer("Computer 2", environment, new Location(0, 1), server, LOG);
+        Computer computer3 = new Computer("Computer 3", environment, new Location(0, 2), server, LOG);
+        List<Entity> entities = new ArrayList<>();
+        entities.add(computer1);
+        entities.add(computer2);
+        entities.add(computer3);
+
+        List<Entity> newEntities = new ArrayList<>();
+        computer1.replace(newEntities);
+        computer2.replace(newEntities);
+        computer3.replace(newEntities);
+        entities.addAll(newEntities);
+        for(Iterator<Entity> it = entities.iterator(); it.hasNext(); ) {
+            Entity entity = it.next();
+            if(! entity.isAlive()) {
+                it.remove();
+            }
+        }
+        if (LOG) entities.forEach(entity -> entity.print());
+        assertTrue(!entities.contains(computer1));
+        assertTrue(!entities.contains(computer2));
+        assertTrue(!entities.contains(computer3));
+
+    }
     @Test
     public void isNotWorking() {
         Computer computer = new Computer("Computer", environment, new Location(0, 0), server, LOG);

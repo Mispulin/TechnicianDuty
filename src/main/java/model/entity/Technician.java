@@ -16,7 +16,8 @@ public class Technician extends Entity implements Comparable {
 
     private static final Random rand = Randomizer.getRandom();
     public static final int AGE_MAX = 45;
-    private static final double REPAIR_PROBABILITY = 0.3;
+    private static final double REPAIR_PROBABILITY = 0.6;
+    private static int nextId = 1;
 
     private int experience;
     private boolean available = true;
@@ -31,6 +32,7 @@ public class Technician extends Entity implements Comparable {
         this.place = place;
         boss.addTechnician(this);
         this.boss = boss;
+        nextId++;
     }
 
     public void setAvailable(boolean available) {
@@ -46,7 +48,6 @@ public class Technician extends Entity implements Comparable {
     }
 
     public void readLog() {
-        System.out.println("Reading logs.");
         workLogs.forEach(log -> log.print());
     }
 
@@ -56,7 +57,7 @@ public class Technician extends Entity implements Comparable {
             if (isAvailable()) {
                 goHome();
             } else {
-                goWork();
+                goWork(entities);
             }
         }
     }
@@ -71,27 +72,40 @@ public class Technician extends Entity implements Comparable {
 
     private void ageUp(List<Entity> entities) {
         experience++;
-        if (experience > AGE_MAX) {
-            report("I'm too old for this - bye!");
+        if (experience >= AGE_MAX) {
             findReplacement(entities);
-            die();
+            retire();
         }
     }
 
     private void findReplacement(List<Entity> entities) {
-        Environment environment = getEnvironment();
-        Location place = getLocation();
-        int number = Integer.valueOf(getName().replaceAll("\\D+","")) + 1;
-        number = Integer.valueOf(getName().substring(getName().lastIndexOf(" ") + 1)) + 1;
-        Technician replacement = new Technician("Technician " + number, getEnvironment(), place, boss, getReportSelf());
+        Technician replacement = new Technician("Technician " + nextId, getEnvironment(), getLocation(), boss, getReportSelf());
         entities.add(replacement);
+        report(String.format("Technician %d is now my replacement.", nextId));
     }
 
     public void assign(Computer computer) {
         computer.assign();
+        boss.assignedNotification(this, computer);
         assignment = computer;
         available = false;
-        report("Got an assignment, bummer...");
+        report(String.format("Got an assignment, bummer... Now at %s and gotta go to %s.", getLocation(), assignment.getLocation()));
+    }
+
+    private void retire() {
+        if (!available) {
+            giveUp();
+        }
+        report("I'm too old for this - bye!");
+        boss.retireTechnician(this);
+        die();
+    }
+
+    public void giveUp() {
+        report("Gotta give up my assignment...");
+        available = true;
+        boss.giveUpNotification(assignment);
+        assignment = null;
     }
 
     public void report(String message) {
@@ -101,6 +115,7 @@ public class Technician extends Entity implements Comparable {
 
     private void go(Location location) {
         if (!isAt(location)) {
+            /*
             if ((getLocation().getRow() == location.getRow())) {
                 if (getLocation().getCol() < location.getCol()) {
                     goRight();
@@ -116,29 +131,34 @@ public class Technician extends Entity implements Comparable {
             } else {
                 // not the same row or column so pick the lower distance and then the higher
                 Location diff = getLocation().diff(location);
-
             }
+            */
+            takeShortcut(location);
         } else {
             report("I'm here.");
         }
     }
 
-    private void doWork() {
+    private void free() {
+        available = true;
+        assignment = null;
+    }
+
+    private void doWork(List<Entity> entities) {
         if (assignment.isRepairable()) {
             report("Oh, I can repair this.");
             if (rand.nextDouble() <= REPAIR_PROBABILITY) {
                 assignment.repair();
                 report("Succesfully repaired.");
-                available = true;
-                assignment = null;
+                free();
             } else {
                 report("Well, I misjudged the situation, I will need more time.");
             }
         } else if(!assignment.isRepairable()) {
             report("Terrible condition - I have to replace it.");
-            assignment.replace();
             report("Good as new.. well, it is new!");
-        } else {
+            assignment.replace(entities);
+            free();
             report("I'm free.");
         }
     }
@@ -152,13 +172,13 @@ public class Technician extends Entity implements Comparable {
         }
     }
 
-    private void goWork() {
+    private void goWork(List<Entity> entities) {
         if (!isAt(assignment.getLocation())) {
             report("Work to do! Gotta get there quickly!");
             go(assignment.getLocation());
         } else {
-            report("Finally at my assignment, so I better get to it.");
-            doWork();
+            report("At my assignment, so I better get to it.");
+            doWork(entities);
         }
     }
 
@@ -177,6 +197,14 @@ public class Technician extends Entity implements Comparable {
 
     private boolean hasObstacle(Location location) {
         return getEnvironment().getEntityAt(location) != null;
+    }
+
+    private void takeShortcut(Location location) {
+        Location getTo = place;
+        if (!location.equals(getTo)) {
+            getTo = new Location(location.getRow() - 1, location.getCol());
+        }
+        setLocation(getTo);
     }
 
     private void goUp() {
@@ -200,7 +228,7 @@ public class Technician extends Entity implements Comparable {
     }
 
     public void print() {
-        System.out.println(String.format("%s, stáří: %-5d %s", getName(), getExperience(), getLocation().toString()));
+        System.out.println(String.format("%s, exp: %-5d %s", getName(), getExperience(), getLocation().toString()));
     }
 
     @Override

@@ -1,6 +1,8 @@
 package app;
 
-import model.*;
+import model.Environment;
+import model.Location;
+import model.Randomizer;
 import model.entity.Computer;
 import model.entity.Entity;
 import model.entity.Server;
@@ -14,43 +16,55 @@ import java.util.stream.Collectors;
 
 public class Simulator {
 
-    private static final int DEFAULT_WIDTH = 20;
-    private static final int DEFAULT_HEIGHT = 20;
+    private static final int DEFAULT_SIZE = 10;
+    private static int size = DEFAULT_SIZE;
 
-    public static int countTechnicians = 3;
-    public static int countComputers = 6;
     public static int countServers = 1;
+    public static int countTechnicians = 2;
+    public static int countComputers = 3;
 
-    public static boolean LOG;
-
-    private List<Entity> entities;
-    private Environment environment;
     private int step = 0;
-
+    public static boolean LOG = false;
+    private Environment environment = new Environment(size, size);
+    private List<Entity> entities = new ArrayList<>();
+    private List<Entity> retired = new ArrayList<>();
 
     public Simulator() {
-        this(DEFAULT_HEIGHT, DEFAULT_WIDTH, false);
+        this(DEFAULT_SIZE, false);
     }
 
     public Simulator(boolean report) {
-        this(DEFAULT_HEIGHT, DEFAULT_WIDTH, report);
+        this(DEFAULT_SIZE, report);
     }
 
-    public Simulator(int height, int width, boolean report) {
-        if(width <= 0 || height <= 0) {
-            height = DEFAULT_HEIGHT;
-            width = DEFAULT_WIDTH;
+    public Simulator(int size, boolean report) {
+        if (size > 0) {
+            this.size = size;
         }
         LOG = report;
+        environment = new Environment(size, size);
+        setup();
+    }
 
-        entities = new ArrayList<>();
-        environment = new Environment(height, width);
+    public Simulator(int serv, int tech, int comp, boolean report) {
+        countTechnicians = tech;
+        countComputers = comp;
+        countServers = serv;
+        LOG = report;
+        setup();
+    }
 
-        reset();
+    public Simulator(int size, int serv, int tech, int comp, boolean report) {
+        countTechnicians = tech;
+        countComputers = comp;
+        countServers = serv;
+        LOG = report;
+        environment = new Environment(size, size);
+        setup();
     }
 
     public void runLongSimulation() {
-        simulate(5000);
+        simulate(100);
     }
 
     public void simulate(int numSteps) {
@@ -67,13 +81,14 @@ public class Simulator {
             Entity entity = it.next();
             entity.act(newEntities);
             if(! entity.isAlive()) {
+                retired.add(entity);
                 it.remove();
             }
         }
         entities.addAll(newEntities);
     }
 
-    public void reset() {
+    public void setup() {
         step = 0;
         entities.clear();
         populate();
@@ -83,39 +98,61 @@ public class Simulator {
         Random rand = Randomizer.getRandom();
         environment.clear();
         List<Server> servers = new ArrayList<>();
+        List<Location> usedLocations = new ArrayList<>();
+        int row, col;
+
         for (int i = 0; i < countServers; i++) {
-            Server server = new Server("Crash server", environment, new Location(0, i), LOG);
+            do {
+                row = rand.nextInt(size - 5) + 5;
+                col = rand.nextInt(size - 1) + 1;
+
+            } while (usedLocations.contains(new Location(row, col)));
+            Server server = new Server("Crash server", environment, new Location(row, col), LOG);
             entities.add(server);
             servers.add(server);
-            // server.print();
+            usedLocations.add(new Location(row, col));
+            if (LOG) server.print();
         }
 
         for (int i = 0; i < countTechnicians; i++) {
             Server boss = servers.get(rand.nextInt(countServers ));
-            Technician technician = new Technician("Technician " + (i + 1), environment, new Location(2, i * 2), boss, LOG);
+            do {
+                row = rand.nextInt(size - 5) + 5;
+                col = rand.nextInt(size - 1) + 1;
+
+            } while (usedLocations.contains(new Location(row, col)));
+            Technician technician = new Technician("Technician " + (i + 1), environment, new Location(row, col), boss, LOG);
             entities.add(technician);
-            // technician.print();
+            usedLocations.add(new Location(row, col));
+            if (LOG) technician.print();
         }
 
         int i = 0;
-        List<Location> used = new ArrayList<>();
         while (i < countComputers) {
             i++;
-            int row = rand.nextInt(DEFAULT_WIDTH - 5) + 5;
-            int col = rand.nextInt(DEFAULT_HEIGHT - 1) + 1;
-            if (used.contains(new Location(row, col))) {
-                continue;
-            }
+            do {
+                row = rand.nextInt(size - 5) + 5;
+                col = rand.nextInt(size - 1) + 1;
+
+            } while (usedLocations.contains(new Location(row, col)));
             Server boss = servers.get(rand.nextInt(countServers ));
             Computer computer = new Computer("Computer " + i, environment, new Location(row, col), boss, LOG);
             entities.add(computer);
-            used.add(new Location(row, col));
-            // computer.print();
+            usedLocations.add(new Location(row, col));
+            if (LOG) computer.print();
         }
     }
 
     public List<Entity> getEntities() {
         return entities;
+    }
+
+    public List<Entity> getRetired() {
+        return retired;
+    }
+
+    public void print(List<Entity> entities) {
+        entities.forEach(Entity::print);
     }
 
     public List<Technician> getTechnicians() {

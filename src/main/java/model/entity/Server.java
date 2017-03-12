@@ -5,6 +5,7 @@ import model.Location;
 import model.log.Log;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Mish.k.a on 12. 3. 2017.
@@ -27,9 +28,8 @@ public class Server extends Entity implements ServerListener {
         if (hasAssignments()) {
             if (hasFreeTechnicians()) {
                 assignWork();
-                report("There's work to do! Technician is on his way!");
             } else {
-                report("There's work to do but too few technicians... Gotta wait.");
+                report("There's work to do but no free technician... Gotta wait.");
             }
         } else {
             report("There are no free assignments.");
@@ -49,11 +49,24 @@ public class Server extends Entity implements ServerListener {
     }
 
     @Override
-    public void assignedNotification(Computer computer) {
+    public void assignedNotification(Technician technician, Computer computer) {
         assignments.remove(computer);
-        report(String.format("%s assigned.", computer.getName()));
+        report(String.format("%s assigned to %s.", computer.getName(), technician.getName()));
     }
 
+    @Override
+    public void giveUpNotification(Computer computer) {
+        assignments.add(computer);
+        report(String.format("%s assignment cancelled.", computer.getName()));
+    }
+
+    @Override
+    public void retireTechnician(Technician technician) {
+        technicians.remove(technician);
+        report(String.format("%s has left.", technician.getName()));
+    }
+
+    @Override
     public void addTechnician(Technician technician) {
         technicians.add(technician);
     }
@@ -71,6 +84,11 @@ public class Server extends Entity implements ServerListener {
         return false;
     }
 
+    private List<Technician> getFreeTechnicians() {
+        List<Technician> freeTechnicians = technicians.stream().filter(Technician::isAvailable).collect(Collectors.toList());
+        return freeTechnicians;
+    }
+
     public List<Computer> getAssignments() {
         return assignments;
     }
@@ -79,15 +97,17 @@ public class Server extends Entity implements ServerListener {
         return getAssignments().size() > 0;
     }
 
-    public void print() {
-        System.out.println(String.format("%-13s %s", getName(), getLocation().toString()));
-    }
-
     public void assignWork() {
         Collections.sort(assignments);
-        Collections.sort(technicians);
-        technicians.stream().filter(technician -> !assignments.isEmpty()).forEach(technician -> {
+        List<Technician> freeTechnicians = getFreeTechnicians();
+        Collections.sort(freeTechnicians);
+        freeTechnicians.stream().filter(technician -> !assignments.isEmpty()).forEach(technician -> {
             technician.assign(assignments.get(0));
+            report(String.format("There's work to do! %s is on his way!", technician.getName()));
         });
+    }
+
+    public void print() {
+        System.out.println(String.format("%-13s %s", getName(), getLocation().toString()));
     }
 }

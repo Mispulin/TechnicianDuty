@@ -16,9 +16,13 @@ public class SimulatorTest {
 
     @Test
     public void isPopulated() {
-        Simulator simulator = new Simulator();
+        int countServers = 1;
+        int countTechnicians = 2;
+        int countComputers = 4;
+        Simulator simulator = new Simulator(20, countServers, countTechnicians, countComputers, false);
         simulator.simulateOneStep();
-        assertTrue(simulator.getEntities().size() == (Simulator.countComputers + Simulator.countTechnicians + Simulator.countServers));
+        simulator.print(simulator.getEntities());
+        assertTrue(simulator.getEntities().size() == (countServers + countTechnicians + countComputers));
     }
 
     @Test
@@ -29,14 +33,26 @@ public class SimulatorTest {
 
     @Test
     public void fiveSteps() {
-        Simulator simulator = new Simulator(true);
+        Simulator simulator = new Simulator(false);
         simulator.simulate(5);
     }
 
     @Test
     public void tenSteps() {
-        Simulator simulator = new Simulator(true);
+        Simulator simulator = new Simulator(false);
         simulator.simulate(10);
+    }
+
+    @Test
+    public void longSimulation() {
+        Simulator simulator = new Simulator(1, 2, 3, false);
+        simulator.runLongSimulation();
+    }
+
+    @Test
+    public void longerSimulation() {
+        Simulator simulator = new Simulator(1, 2, 3, false);
+        simulator.simulate(1000);
     }
 
     @Test
@@ -47,5 +63,13 @@ public class SimulatorTest {
         Random rand = Randomizer.getRandom();
         Technician technician = technicians.get(rand.nextInt(technicians.size()));
         technician.readLog();
+    }
+
+    @Test
+    public void retiredNotEmpty() {
+        Simulator simulator = new Simulator(false);
+        simulator.runLongSimulation();
+        assertFalse(simulator.getRetired().isEmpty());
+        simulator.print(simulator.getRetired());
     }
 }

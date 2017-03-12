@@ -41,7 +41,7 @@ public class ServerTest {
     }
 
     @Test
-    public void correctTechnicianAssignment() {
+    public void experiencedTechnicianAssignment() {
         Server server = new Server("Crash server", environment, new Location(0, 0), LOG);
 
         Technician technician1 = new Technician("Technician 1", environment, new Location(0, 2), server, LOG);
@@ -61,7 +61,7 @@ public class ServerTest {
     }
 
     @Test
-    public void correctComputerAssignment() {
+    public void priorityComputerAssignment() {
         Server server = new Server("Crash server", environment, new Location(0, 0), LOG);
 
         Technician technician = new Technician("Technician 1", environment, new Location(0, 2), server, LOG);
@@ -69,33 +69,62 @@ public class ServerTest {
         Computer computer1 = new Computer("Computer 1", environment, new Location(0, 2), server, LOG);
         computer1.setPriority(9);
         computer1.breakIt();
-
-        for (Computer computer : server.getAssignments()) {
-            System.out.println(computer.getName() + ' ' + computer.getPriority());
+        if (LOG) {
+            for (Computer computer : server.getAssignments()) {
+                System.out.println(computer.getName() + ' ' + computer.getPriority());
+            }
+            System.out.println();
         }
-        System.out.println();
-
         Computer computer2 = new Computer("Computer 2", environment, new Location(0, 2), server, LOG);
         computer2.setPriority(10);
         computer2.breakIt();
-
-        for (Computer computer : server.getAssignments()) {
-            System.out.println(computer.getName() + ' ' + computer.getPriority());
+        if (LOG) {
+            for (Computer computer : server.getAssignments()) {
+                System.out.println(computer.getName() + ' ' + computer.getPriority());
+            }
+            System.out.println();
         }
-        System.out.println();
-
         Computer computer3 = new Computer("Computer 3", environment, new Location(0, 2), server, LOG);
         computer3.setPriority(8);
         computer3.breakIt();
-
-        for (Computer computer : server.getAssignments()) {
-            System.out.println(computer.getName() + ' ' + computer.getPriority());
+        if (LOG) {
+            for (Computer computer : server.getAssignments()) {
+                System.out.println(computer.getName() + ' ' + computer.getPriority());
+            }
+            System.out.println();
         }
-        System.out.println();
-
         server.assignWork();
 
         assertEquals(computer2, technician.getAssignment());
+    }
+
+    @Test
+    public void assignToFreeTechnician() {
+        Server server = new Server("Crash server", environment, new Location(0, 0), LOG);
+
+        Technician technician1 = new Technician("Technician 1", environment, new Location(0, 2), server, LOG);
+        technician1.setExperience(35);
+        technician1.setAvailable(false);
+
+        Technician technician2 = new Technician("Technician 2", environment, new Location(0, 4), server, LOG);
+        technician2.setExperience(31);
+        technician2.setAvailable(true);
+
+        Technician technician3 = new Technician("Technician 3", environment, new Location(0, 5), server, LOG);
+        technician3.setExperience(13);
+        technician3.setAvailable(true);
+
+        Technician technician4 = new Technician("Technician 4", environment, new Location(0, 8), server, LOG);
+        technician4.setExperience(5);
+        technician4.setAvailable(true);
+
+        Computer computer1 = new Computer("Computer 1", environment, new Location(0, 2), server, LOG);
+        computer1.setPriority(9);
+        computer1.breakIt();
+
+        server.assignWork();
+
+        assertEquals(false, technician2.isAvailable());
     }
 
 }
