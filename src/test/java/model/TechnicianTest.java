@@ -34,8 +34,8 @@ public class TechnicianTest {
         int step = 0;
         while (step < 100) {
             Technician technician = new Technician("Technician", environment, new Location(0, 2), server, LOG);
-            assertTrue("Error, age is too high.", Technician.AGE_MAX >= technician.getAge());
-            assertTrue("Error, age is too low.", 1 <= technician.getAge());
+            assertTrue("Error, age is too high.", Technician.AGE_MAX >= technician.getExperience());
+            assertTrue("Error, age is too low.", 1 <= technician.getExperience());
             assertTrue(technician.isAvailable());
             step++;
         }
@@ -59,15 +59,15 @@ public class TechnicianTest {
         List<Technician> technicians = new ArrayList<>();
 
         Technician technician1 = new Technician("Technician 1", environment, new Location(0, 2), server, LOG);
-        technician1.setAge(17);
+        technician1.setExperience(17);
         technicians.add(technician1);
 
         Technician technician2 = new Technician("Technician 2", environment, new Location(0, 2), server, LOG);
-        technician2.setAge(5);
+        technician2.setExperience(5);
         technicians.add(technician2);
 
         Technician technician3 = new Technician("Technician 3", environment, new Location(0, 2), server, LOG);
-        technician3.setAge(15);
+        technician3.setExperience(15);
         technicians.add(technician3);
 
         Collections.sort(technicians);

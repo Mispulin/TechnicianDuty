@@ -1,5 +1,7 @@
 package model;
 
+import model.entity.Technician;
+
 /**
  * Created by Mish.k.a on 11. 3. 2017.
  */

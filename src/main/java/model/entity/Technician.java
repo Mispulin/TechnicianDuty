@@ -18,17 +18,17 @@ public class Technician extends Entity implements Comparable {
     public static final int AGE_MAX = 45;
     private static final double REPAIR_PROBABILITY = 0.3;
 
-    private int age;
+    private int experience;
     private boolean available = true;
-    private Location home;
+    private Location place;
     private Computer assignment = null;
     private List<WorkLog> workLogs = new ArrayList<>();
     private ServerListener boss;
 
-    public Technician(String name, Environment environment, Location home, ServerListener boss, boolean reportSelf) {
-        super(name, environment, home, reportSelf);
-        age = rand.nextInt(AGE_MAX - 1) + 1;
-        this.home = home;
+    public Technician(String name, Environment environment, Location place, ServerListener boss, boolean reportSelf) {
+        super(name, environment, place, reportSelf);
+        experience = rand.nextInt(AGE_MAX - 1) + 1;
+        this.place = place;
         boss.addTechnician(this);
         this.boss = boss;
     }
@@ -61,17 +61,17 @@ public class Technician extends Entity implements Comparable {
         }
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setExperience(int experience) {
+        this.experience = experience;
     }
 
-    public int getAge() {
-        return age;
+    public int getExperience() {
+        return experience;
     }
 
     private void ageUp(List<Entity> entities) {
-        age++;
-        if (age > AGE_MAX) {
+        experience++;
+        if (experience > AGE_MAX) {
             report("I'm too old for this - bye!");
             findReplacement(entities);
             die();
@@ -144,9 +144,9 @@ public class Technician extends Entity implements Comparable {
     }
 
     private void goHome() {
-        if (!isAt(home)) {
+        if (!isAt(place)) {
             report("Nothing to do - going to my place.");
-            go(home);
+            go(place);
         } else {
             report("Nothing to do - staying at my place.");
         }
@@ -200,14 +200,14 @@ public class Technician extends Entity implements Comparable {
     }
 
     public void print() {
-        System.out.println(String.format("%s, stáří: %-5d %s", getName(), getAge(), getLocation().toString()));
+        System.out.println(String.format("%s, stáří: %-5d %s", getName(), getExperience(), getLocation().toString()));
     }
 
     @Override
     public int compareTo(Object obj) {
         if(obj instanceof Technician) {
             Technician tech = (Technician) obj;
-            return Integer.compare(tech.getAge(), getAge());
+            return Integer.compare(tech.getExperience(), getExperience());
         }
         else {
             return -1;

@@ -45,13 +45,13 @@ public class ServerTest {
         Server server = new Server("Crash server", environment, new Location(0, 0), LOG);
 
         Technician technician1 = new Technician("Technician 1", environment, new Location(0, 2), server, LOG);
-        technician1.setAge(35);
+        technician1.setExperience(35);
 
         Technician technician2 = new Technician("Technician 2", environment, new Location(0, 2), server, LOG);
-        technician2.setAge(25);
+        technician2.setExperience(25);
 
         Technician technician3 = new Technician("Technician 3", environment, new Location(0, 2), server, LOG);
-        technician3.setAge(28);
+        technician3.setExperience(28);
 
         Computer computer = new Computer("Computer 1", environment, new Location(0, 2), server, LOG);
         computer.breakIt();
