@@ -1,5 +1,7 @@
 package model;
 
+import model.entity.Entity;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
