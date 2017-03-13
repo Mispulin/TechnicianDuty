@@ -1,5 +1,6 @@
 package app;
 
+import model.Counter;
 import model.Environment;
 import model.Location;
 import model.Randomizer;
@@ -107,7 +108,7 @@ public class Simulator {
                 col = rand.nextInt(size - 1) + 1;
 
             } while (usedLocations.contains(new Location(row, col)));
-            Server server = new Server("Crash server", environment, new Location(row, col), LOG);
+            Server server = new Server(environment, new Location(row, col), LOG);
             entities.add(server);
             servers.add(server);
             usedLocations.add(new Location(row, col));
@@ -121,7 +122,7 @@ public class Simulator {
                 col = rand.nextInt(size - 1) + 1;
 
             } while (usedLocations.contains(new Location(row, col)));
-            Technician technician = new Technician("Technician " + (i + 1), environment, new Location(row, col), boss, LOG);
+            Technician technician = new Technician(environment, new Location(row, col), boss, LOG);
             entities.add(technician);
             usedLocations.add(new Location(row, col));
             if (LOG) technician.print();
@@ -136,7 +137,7 @@ public class Simulator {
 
             } while (usedLocations.contains(new Location(row, col)));
             Server boss = servers.get(rand.nextInt(countServers ));
-            Computer computer = new Computer("Computer " + i, environment, new Location(row, col), boss, LOG);
+            Computer computer = new Computer(environment, new Location(row, col), boss, LOG);
             entities.add(computer);
             usedLocations.add(new Location(row, col));
             if (LOG) computer.print();

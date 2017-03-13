@@ -1,5 +1,6 @@
 package model.entity;
 
+import model.Counter;
 import model.Environment;
 import model.Location;
 import model.Randomizer;
@@ -19,7 +20,6 @@ public class Computer extends Entity implements Comparable {
     public static final int AGE_MAX = 40;
     public static final int RETIREMENT = 2;
     private static final double MALFUNCTION_PROBABILITY = 0.1;
-    private static int nextId = 1;
 
     private boolean working;
     private int priority;
@@ -28,15 +28,15 @@ public class Computer extends Entity implements Comparable {
     private List<Log> logs;
     private ServerListener server;
 
-    public Computer(String name, Environment environment, Location location, ServerListener server, boolean reportSelf) {
-        super(name, environment, location, reportSelf);
+    public Computer(Environment environment, Location location, ServerListener server, boolean reportSelf) {
+        super("Computer " + Counter.computer, environment, location, reportSelf);
+        Counter.addComputer();
         working = true;
         priority = 0;
         assigned = false;
         age = rand.nextInt(AGE_MAX - 1) + 1;
         logs = new ArrayList<>();
         addListener(server);
-        nextId++;
     }
 
     public void addListener(ServerListener toAdd) {
@@ -55,6 +55,7 @@ public class Computer extends Entity implements Comparable {
             working = false;
             report("I'm too old, need to be replaced!");
             server.crashNotification(this);
+            age++;
         } else {
             age++;
         }
@@ -106,9 +107,9 @@ public class Computer extends Entity implements Comparable {
 
     public void replace(List<Entity> entities) {
         Location place = getLocation();
-        Computer replacement = new Computer("Computer " + nextId, getEnvironment(), place, server, getReportSelf());
+        Computer replacement = new Computer(getEnvironment(), place, server, getReportSelf());
         replacement.setAge(0);
-        report(String.format("Computer %d is now my replacement.", nextId));
+        report(String.format("Computer %d is now my replacement.", Counter.computer - 1));
         entities.add(replacement);
         die();
     }

@@ -1,5 +1,6 @@
 package model.entity;
 
+import model.Counter;
 import model.Environment;
 import model.Location;
 import model.Randomizer;
@@ -17,7 +18,6 @@ public class Technician extends Entity implements Comparable {
     private static final Random rand = Randomizer.getRandom();
     public static final int AGE_MAX = 45;
     private static final double REPAIR_PROBABILITY = 0.6;
-    private static int nextId = 1;
 
     private int experience;
     private boolean available = true;
@@ -26,13 +26,13 @@ public class Technician extends Entity implements Comparable {
     private List<WorkLog> workLogs = new ArrayList<>();
     private ServerListener boss;
 
-    public Technician(String name, Environment environment, Location place, ServerListener boss, boolean reportSelf) {
-        super(name, environment, place, reportSelf);
+    public Technician(Environment environment, Location place, ServerListener boss, boolean reportSelf) {
+        super("Technician " + Counter.technician, environment, place, reportSelf);
+        Counter.addTechnician();
         experience = rand.nextInt(AGE_MAX - 1) + 1;
         this.place = place;
         boss.addTechnician(this);
         this.boss = boss;
-        nextId++;
     }
 
     public void setAvailable(boolean available) {
@@ -73,29 +73,28 @@ public class Technician extends Entity implements Comparable {
     private void ageUp(List<Entity> entities) {
         experience++;
         if (experience >= AGE_MAX) {
-            findReplacement(entities);
-            retire();
+            retire(entities);
         }
     }
 
     private void findReplacement(List<Entity> entities) {
-        Technician replacement = new Technician("Technician " + nextId, getEnvironment(), getLocation(), boss, getReportSelf());
+        Technician replacement = new Technician(getEnvironment(), getLocation(), boss, getReportSelf());
         entities.add(replacement);
-        report(String.format("Technician %d is now my replacement.", nextId));
+        report(String.format("Technician %d is now my replacement.", Counter.technician - 1));
     }
 
     public void assign(Computer computer) {
-        computer.assign();
         boss.assignedNotification(this, computer);
         assignment = computer;
         available = false;
         report(String.format("Got an assignment, bummer... Now at %s and gotta go to %s.", getLocation(), assignment.getLocation()));
     }
 
-    private void retire() {
+    private void retire(List<Entity> entities) {
         if (!available) {
             giveUp();
         }
+        findReplacement(entities);
         report("I'm too old for this - bye!");
         boss.retireTechnician(this);
         die();

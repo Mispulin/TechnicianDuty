@@ -1,5 +1,6 @@
 package model.entity;
 
+import model.Counter;
 import model.Environment;
 import model.Location;
 import model.log.Log;
@@ -16,8 +17,9 @@ public class Server extends Entity implements ServerListener {
     private List<Computer> assignments;
     private List<Log> logs;
 
-    public Server(String name, Environment environment, Location location, boolean reportSelf) {
-        super(name, environment, location, reportSelf);
+    public Server(Environment environment, Location location, boolean reportSelf) {
+        super("Server " + Counter.server, environment, location, reportSelf);
+        Counter.addServer();
         technicians = new ArrayList<>();
         assignments = new ArrayList<>();
         logs = new ArrayList<>();
@@ -51,6 +53,7 @@ public class Server extends Entity implements ServerListener {
     @Override
     public void assignedNotification(Technician technician, Computer computer) {
         assignments.remove(computer);
+        computer.assign();
         report(String.format("%s assigned to %s.", computer.getName(), technician.getName()));
     }
 
@@ -98,13 +101,26 @@ public class Server extends Entity implements ServerListener {
     }
 
     public void assignWork() {
-        Collections.sort(assignments);
-        List<Technician> freeTechnicians = getFreeTechnicians();
-        Collections.sort(freeTechnicians);
-        freeTechnicians.stream().filter(technician -> !assignments.isEmpty()).forEach(technician -> {
-            technician.assign(assignments.get(0));
-            report(String.format("There's work to do! %s is on his way!", technician.getName()));
-        });
+        List<Computer> toAssign = new ArrayList<>(assignments);
+        Collections.sort(toAssign);
+
+        for (Computer computer : toAssign) {
+            List<Technician> freeTechnicians = getFreeTechnicians();
+            if (freeTechnicians.size() > 0) {
+                Collections.sort(freeTechnicians);
+
+                if (computer.getPriority() <= 5) {
+                    Technician technician = freeTechnicians.get(freeTechnicians.size() - 1);
+                    technician.assign(computer);
+                    report(String.format("There's work to do! %s is on his way!", technician.getName()));
+                } else {
+                    Technician technician = freeTechnicians.get(0);
+                    technician.assign(computer);
+                    report(String.format("There's work to do! Experienced %s is on his way!", technician.getName()));
+                }
+            }
+        }
+
     }
 
     public void print() {

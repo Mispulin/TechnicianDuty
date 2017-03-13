@@ -25,7 +25,7 @@ public class ComputerTest {
     @Before
     public void init() {
         environment = new Environment(50, 50);
-        server = new Server("Crash server", environment, new Location(0, 0), LOG);
+        server = new Server(environment, new Location(0, 0), LOG);
         LOG = false;
     }
 
@@ -33,7 +33,7 @@ public class ComputerTest {
     public void correctCreation() {
         int step = 0;
         while (step < 100) {
-            Computer computer = new Computer("Computer", environment, new Location(0, 0), server, LOG);
+            Computer computer = new Computer(environment, new Location(0, 0), server, LOG);
             assertTrue("Error, priority is too high.", Computer.PRIORITY_MAX >= computer.getPriority());
             assertTrue("Error, priority is too low.",  0 <= computer.getPriority());
             assertTrue("Error, age is too high.", Computer.AGE_MAX >= computer.getAge());
@@ -44,21 +44,21 @@ public class ComputerTest {
 
     @Test
     public void isRepairable() {
-        Computer computer = new Computer("Computer", environment, new Location(0, 0), server, LOG);
+        Computer computer = new Computer(environment, new Location(0, 0), server, LOG);
         computer.setAge(2);
         assertTrue(computer.isRepairable());
     }
 
     @Test
     public void isNotRepairable() {
-        Computer computer = new Computer("Computer", environment, new Location(0, 0), server, LOG);
+        Computer computer = new Computer(environment, new Location(0, 0), server, LOG);
         computer.setAge(Computer.AGE_MAX - Computer.RETIREMENT + 1);
         assertFalse(computer.isRepairable());
     }
 
     @Test
     public void isRepaired() {
-        Computer computer = new Computer("Computer", environment, new Location(0, 0), server, LOG);
+        Computer computer = new Computer(environment, new Location(0, 0), server, LOG);
         computer.breakIt();
         computer.repair();
         assertTrue(computer.getWorking());
@@ -66,7 +66,7 @@ public class ComputerTest {
 
     @Test
     public void isReplaced() {
-        Computer computer = new Computer("Computer 1", environment, new Location(0, 0), server, LOG);
+        Computer computer = new Computer(environment, new Location(0, 0), server, LOG);
         List<Entity> entities = new ArrayList<>();
         entities.add(computer);
 
@@ -85,9 +85,9 @@ public class ComputerTest {
 
     @Test
     public void areReplaced() {
-        Computer computer1 = new Computer("Computer 1", environment, new Location(0, 0), server, LOG);
-        Computer computer2 = new Computer("Computer 2", environment, new Location(0, 1), server, LOG);
-        Computer computer3 = new Computer("Computer 3", environment, new Location(0, 2), server, LOG);
+        Computer computer1 = new Computer(environment, new Location(0, 0), server, LOG);
+        Computer computer2 = new Computer(environment, new Location(0, 1), server, LOG);
+        Computer computer3 = new Computer(environment, new Location(0, 2), server, LOG);
         List<Entity> entities = new ArrayList<>();
         entities.add(computer1);
         entities.add(computer2);
@@ -112,7 +112,7 @@ public class ComputerTest {
     }
     @Test
     public void isNotWorking() {
-        Computer computer = new Computer("Computer", environment, new Location(0, 0), server, LOG);
+        Computer computer = new Computer(environment, new Location(0, 0), server, LOG);
         computer.breakIt();
         assertFalse(computer.getWorking());
     }
@@ -121,15 +121,15 @@ public class ComputerTest {
     public void correctOrder() {
         List<Computer> computers = new ArrayList<>();
 
-        Computer computer1 = new Computer("Computer 1", environment, new Location(0, 2), server, LOG);
+        Computer computer1 = new Computer(environment, new Location(0, 2), server, LOG);
         computer1.setPriority(7);
         computers.add(computer1);
 
-        Computer computer2 = new Computer("Computer 2", environment, new Location(0, 2), server, LOG);
+        Computer computer2 = new Computer(environment, new Location(0, 2), server, LOG);
         computer2.setPriority(4);
         computers.add(computer2);
 
-        Computer computer3 = new Computer("Computer 3", environment, new Location(0, 2), server, LOG);
+        Computer computer3 = new Computer(environment, new Location(0, 2), server, LOG);
         computer3.setPriority(2);
         computers.add(computer3);
 

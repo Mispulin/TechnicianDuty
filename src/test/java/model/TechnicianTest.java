@@ -25,7 +25,7 @@ public class TechnicianTest {
     @Before
     public void init() {
         environment = new Environment(50, 50);
-        server = new Server("Crash server", environment, new Location(0, 0), LOG);
+        server = new Server(environment, new Location(0, 0), LOG);
         LOG = false;
     }
 
@@ -33,7 +33,7 @@ public class TechnicianTest {
     public void correctCreation() {
         int step = 0;
         while (step < 100) {
-            Technician technician = new Technician("Technician", environment, new Location(0, 2), server, LOG);
+            Technician technician = new Technician(environment, new Location(0, 2), server, LOG);
             assertTrue("Error, age is too high.", Technician.AGE_MAX >= technician.getExperience());
             assertTrue("Error, age is too low.", 1 <= technician.getExperience());
             assertTrue(technician.isAvailable());
@@ -43,14 +43,14 @@ public class TechnicianTest {
 
     @Test
     public void isAvailable() {
-        Technician technician = new Technician("Technician", environment, new Location(0, 2), server, LOG);
+        Technician technician = new Technician(environment, new Location(0, 2), server, LOG);
         assertTrue(technician.isAvailable());
     }
 
     @Test
     public void isNotAvailable() {
-        Technician technician = new Technician("Technician", environment, new Location(0, 2), server, LOG);
-        technician.assign(new Computer("Computer", environment, new Location(1, 1), server, LOG));
+        Technician technician = new Technician(environment, new Location(0, 2), server, LOG);
+        technician.assign(new Computer(environment, new Location(1, 1), server, LOG));
         assertFalse(technician.isAvailable());
     }
 
@@ -58,15 +58,15 @@ public class TechnicianTest {
     public void correctOrder() {
         List<Technician> technicians = new ArrayList<>();
 
-        Technician technician1 = new Technician("Technician 1", environment, new Location(0, 2), server, LOG);
+        Technician technician1 = new Technician(environment, new Location(0, 2), server, LOG);
         technician1.setExperience(17);
         technicians.add(technician1);
 
-        Technician technician2 = new Technician("Technician 2", environment, new Location(0, 2), server, LOG);
+        Technician technician2 = new Technician(environment, new Location(0, 2), server, LOG);
         technician2.setExperience(5);
         technicians.add(technician2);
 
-        Technician technician3 = new Technician("Technician 3", environment, new Location(0, 2), server, LOG);
+        Technician technician3 = new Technician(environment, new Location(0, 2), server, LOG);
         technician3.setExperience(15);
         technicians.add(technician3);
 

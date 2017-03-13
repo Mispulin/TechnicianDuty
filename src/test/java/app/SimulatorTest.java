@@ -45,7 +45,7 @@ public class SimulatorTest {
 
     @Test
     public void longSimulation() {
-        Simulator simulator = new Simulator(1, 2, 3, false);
+        Simulator simulator = new Simulator(1, 2, 6, true);
         simulator.runLongSimulation();
     }
 
