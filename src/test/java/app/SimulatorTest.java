@@ -1,6 +1,7 @@
 package app;
 
 import model.Randomizer;
+import model.entity.Entity;
 import model.entity.Technician;
 import org.junit.Test;
 
@@ -71,5 +72,16 @@ public class SimulatorTest {
         simulator.runLongSimulation();
         assertFalse(simulator.getRetired().isEmpty());
         simulator.print(simulator.getRetired());
+    }
+
+    @Test
+    public void sortEntities() {
+        Simulator simulator = new Simulator(false);
+        simulator.simulate(50);
+        List<Entity> current = simulator.getEntities();
+        current.forEach(entity -> entity.print());
+        System.out.println();
+        List<Entity> sorted = simulator.sortEntitiesByType();
+        sorted.forEach(entity -> entity.print());
     }
 }

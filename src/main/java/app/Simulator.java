@@ -74,10 +74,30 @@ public class Simulator {
         }
     }
 
+    public List<Entity> sortEntitiesByType() {
+        List<Server> servers = new ArrayList<>();
+        List<Technician> technicians = new ArrayList<>();
+        List<Computer> computers = new ArrayList<>();
+
+        for (Entity entity : entities) {
+            if (entity instanceof Server) servers.add((Server) entity);
+            if (entity instanceof Technician) technicians.add((Technician) entity);
+            if (entity instanceof Computer) computers.add((Computer) entity);
+        }
+
+        List<Entity> combine = new ArrayList<>();
+        combine.addAll(servers);
+        combine.addAll(technicians);
+        combine.addAll(computers);
+
+        return combine;
+    }
+
     public void simulateOneStep() {
         step++;
         if (LOG) System.out.println("\nStep " + step + "\n");
         List<Entity> newEntities = new ArrayList<>();
+        entities = sortEntitiesByType();
         for(Iterator<Entity> it = entities.iterator(); it.hasNext(); ) {
             Entity entity = it.next();
             entity.act(newEntities);

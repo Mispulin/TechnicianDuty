@@ -34,7 +34,7 @@ public class TechnicianTest {
         int step = 0;
         while (step < 100) {
             Technician technician = new Technician(environment, new Location(0, 2), server, LOG);
-            assertTrue("Error, age is too high.", Technician.AGE_MAX >= technician.getExperience());
+            assertTrue("Error, age is too high.", Technician.EXP_MAX >= technician.getExperience());
             assertTrue("Error, age is too low.", 1 <= technician.getExperience());
             assertTrue(technician.isAvailable());
             step++;

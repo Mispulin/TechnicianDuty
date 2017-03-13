@@ -16,8 +16,7 @@ import java.util.Random;
 public class Technician extends Entity implements Comparable {
 
     private static final Random rand = Randomizer.getRandom();
-    public static final int AGE_MAX = 45;
-    private static final double REPAIR_PROBABILITY = 0.6;
+    public static final int EXP_MAX = 45;
 
     private int experience;
     private boolean available = true;
@@ -29,7 +28,7 @@ public class Technician extends Entity implements Comparable {
     public Technician(Environment environment, Location place, ServerListener boss, boolean reportSelf) {
         super("Technician " + Counter.technician, environment, place, reportSelf);
         Counter.addTechnician();
-        experience = rand.nextInt(AGE_MAX - 1) + 1;
+        experience = rand.nextInt(EXP_MAX - 1) + 1;
         this.place = place;
         boss.addTechnician(this);
         this.boss = boss;
@@ -72,7 +71,7 @@ public class Technician extends Entity implements Comparable {
 
     private void ageUp(List<Entity> entities) {
         experience++;
-        if (experience >= AGE_MAX) {
+        if (experience >= EXP_MAX) {
             retire(entities);
         }
     }
@@ -146,7 +145,7 @@ public class Technician extends Entity implements Comparable {
     private void doWork(List<Entity> entities) {
         if (assignment.isRepairable()) {
             report("Oh, I can repair this.");
-            if (rand.nextDouble() <= REPAIR_PROBABILITY) {
+            if (rand.nextDouble() <= ( (double) 1 / EXP_MAX * getExperience() )) {
                 assignment.repair();
                 report("Succesfully repaired.");
                 free();

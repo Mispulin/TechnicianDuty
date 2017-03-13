@@ -9,7 +9,7 @@ public class Randomizer {
     private static final int SEED = 666;
     private static final Random rand = new Random(SEED);
     // If true, numbers will always be the same, depending on SEED.
-    private static final boolean useShared = false;
+    private static final boolean useShared = true;
 
     public static Random getRandom() {
         if(useShared) {
