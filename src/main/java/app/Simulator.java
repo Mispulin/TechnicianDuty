@@ -1,6 +1,5 @@
 package app;
 
-import model.Counter;
 import model.Environment;
 import model.Location;
 import model.Randomizer;
@@ -9,10 +8,7 @@ import model.entity.Entity;
 import model.entity.Server;
 import model.entity.Technician;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Simulator {
@@ -23,15 +19,16 @@ public class Simulator {
     public static int countServers = 1;
     public static int countTechnicians = 2;
     public static int countComputers = 3;
+    public static boolean LOG = true;
+    public static int steps = 10;
+    public static int step = 0;
 
-    private int step = 0;
-    public static boolean LOG = false;
     private Environment environment = new Environment(size, size);
     private List<Entity> entities = new ArrayList<>();
     private List<Entity> retired = new ArrayList<>();
 
     public Simulator() {
-        this(DEFAULT_SIZE, false);
+        this(DEFAULT_SIZE, LOG);
     }
 
     public Simulator(boolean report) {
@@ -71,6 +68,13 @@ public class Simulator {
     public void simulate(int numSteps) {
         for(int step = 1; step <= numSteps; step++) {
             simulateOneStep();
+            if (LOG) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -94,7 +98,7 @@ public class Simulator {
     }
 
     public void simulateOneStep() {
-        step++;
+        addStep();
         if (LOG) System.out.println("\nStep " + step + "\n");
         List<Entity> newEntities = new ArrayList<>();
         entities = sortEntitiesByType();
@@ -107,6 +111,10 @@ public class Simulator {
             }
         }
         entities.addAll(newEntities);
+    }
+
+    private void addStep() {
+        step++;
     }
 
     public void setup() {
@@ -190,4 +198,5 @@ public class Simulator {
         List<Server> servers = entities.stream().filter(entity -> entity instanceof Server).map(entity -> (Server) entity).collect(Collectors.toList());
         return servers;
     }
+
 }
