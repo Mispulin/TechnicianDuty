@@ -1,6 +1,8 @@
 package app;
 
+import model.AssignmentItem;
 import model.Randomizer;
+import model.entity.Computer;
 import model.entity.Entity;
 import model.entity.Technician;
 import org.junit.Before;
@@ -54,7 +56,7 @@ public class SimulatorTest {
 
     @Test
     public void longSimulation() {
-        Simulator simulator = new Simulator(1, 2, 6, false);
+        Simulator simulator = new Simulator(1, 2, 6, true);
         simulator.runLongSimulation();
     }
 
@@ -95,7 +97,7 @@ public class SimulatorTest {
 
     @Test
     public void correctCounts() {
-        Simulator simulator = new Simulator(2, 5, 10, false);
+        Simulator simulator = new Simulator(2, 10, 20, false);
         simulator.simulate(200);
 /*
         System.out.println(simulator.getServers().size());
@@ -106,5 +108,34 @@ public class SimulatorTest {
         assertTrue(simulator.getServers().size() == Simulator.countServers);
         assertTrue(simulator.getTechnicians().size() == Simulator.countTechnicians);
         assertTrue(simulator.getComputers().size() == Simulator.countComputers);
+    }
+
+    @Test
+    public void printCurrentTasks() {
+        Simulator simulator = new Simulator(1, 3, 7, false);
+        simulator.simulate(500);
+        System.out.println();
+        simulator.getServers().get(0).printCurrentTasks();
+    }
+
+    @Test
+    public void correctCurrentTasks() {
+        Simulator simulator = new Simulator(1, 2, 6, false);
+        simulator.simulate(50);
+        List<AssignmentItem<Computer, Technician>> tasks = simulator.getServers().get(0).getCurrentTasks();
+        simulator.getTechnicians().forEach(technician -> {
+            boolean listed = false;
+            if (!technician.isAvailable()) {
+                for (AssignmentItem<Computer, Technician> task : tasks) {
+                    if (task.getTechnician() == technician) {
+                        listed = true;
+                        break;
+                    }
+                }
+                assertTrue(listed);
+            } else {
+                assertFalse(listed);
+            }
+        });
     }
 }

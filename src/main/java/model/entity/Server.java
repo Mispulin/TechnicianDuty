@@ -1,5 +1,6 @@
 package model.entity;
 
+import model.AssignmentItem;
 import model.Counter;
 import model.Environment;
 import model.Location;
@@ -15,6 +16,7 @@ public class Server extends Entity implements ServerListener {
 
     private List<Technician> technicians;
     private List<Computer> assignments;
+    private List<AssignmentItem<Computer, Technician>> currentTasks;
     private List<Log> logs;
 
     public Server(Environment environment, Location location, boolean reportSelf) {
@@ -23,6 +25,7 @@ public class Server extends Entity implements ServerListener {
         technicians = new ArrayList<>();
         assignments = new ArrayList<>();
         logs = new ArrayList<>();
+        currentTasks = new ArrayList<>();
     }
 
     @Override
@@ -47,6 +50,8 @@ public class Server extends Entity implements ServerListener {
     @Override
     public void crashNotification(Computer computer) {
         if (computer.isAssigned()) {
+            // When computer stopped working and then got too old, it sent another notification.
+            // This should never happen anymore.
             report(String.format("%s is already assigned.", computer.getName()));
             return;
         }
@@ -65,27 +70,35 @@ public class Server extends Entity implements ServerListener {
     }
 
     @Override
-    public void giveUpNotification(Computer computer) {
+    public void completedNotification(Technician technician) {
+        int index = 0;
+        for (int i = 0; i < currentTasks.size(); i++) {
+            if (currentTasks.get(i).getTechnician() == technician) {
+                index = i;
+                break;
+            }
+        }
+        Computer computer = currentTasks.get(index).getComputer();
+        currentTasks.remove(index);
+        report(String.format("%s has successfully finished his task (%s).", technician.getName(), computer.getName()));
+    }
+
+    @Override
+    public void giveUpNotification(Technician technician, Computer computer) {
+        removeTask(computer);
         assignments.add(computer);
-        report(String.format("%s assignment cancelled.", computer.getName()));
+        report(String.format("%s has cancelled his task on %s.", technician.getName(), computer.getName()));
     }
 
     @Override
     public void retireTechnician(Technician technician) {
         technicians.remove(technician);
-        report(String.format("%s has left.", technician.getName()));
+        report(String.format("%s has retired.", technician.getName()));
     }
 
     @Override
     public void addTechnician(Technician technician) {
         technicians.add(technician);
-    }
-
-    @Override
-    public void removeFromAssignments(Computer computer) {
-        if (assignments.contains(computer)) {
-            assignments.remove(computer);
-        }
     }
 
     public List<Technician> getTechnicians() {
@@ -110,6 +123,21 @@ public class Server extends Entity implements ServerListener {
         return assignments;
     }
 
+    public List<AssignmentItem<Computer, Technician>> getCurrentTasks() {
+        return currentTasks;
+    }
+
+    public void removeTask(Computer computer) {
+        int index = 0;
+        for (int i = 0; i < currentTasks.size(); i++) {
+            if (currentTasks.get(i).getComputer() == computer) {
+                index = i;
+                break;
+            }
+        }
+        currentTasks.remove(index);
+    }
+
     private boolean hasAssignments() {
         return getAssignments().size() > 0;
     }
@@ -126,15 +154,21 @@ public class Server extends Entity implements ServerListener {
                 if (computer.getPriority() <= 5) {
                     Technician technician = freeTechnicians.get(freeTechnicians.size() - 1);
                     technician.assign(computer);
+                    currentTasks.add(new AssignmentItem<>(computer, technician));
                     report(String.format("There's work to do! %s is on his way!", technician.getName()));
                 } else {
                     Technician technician = freeTechnicians.get(0);
                     technician.assign(computer);
+                    currentTasks.add(new AssignmentItem<>(computer, technician));
                     report(String.format("There's work to do! Experienced %s is on his way!", technician.getName()));
                 }
             }
         }
 
+    }
+
+    public void printCurrentTasks() {
+        currentTasks.forEach(task -> System.out.println(task.getTechnician().getName() + " has " + task.getComputer().getName() + "."));
     }
 
     public void print() {

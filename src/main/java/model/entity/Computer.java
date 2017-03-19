@@ -51,7 +51,10 @@ public class Computer extends Entity implements Comparable {
     }
 
     private void ageUp() {
-        if (age == AGE_MAX + 1) {
+        if (age == AGE_MAX + 1 && working) {
+            // Why only working? Cause there's no need for now working computer to send another crash notification.
+            // When technician get to the computer, he will find out that the computer is too old and he will replace it.
+            // Also... it's not working so it doesn't do anything anymore.
             working = false;
             report("I'm too old, need to be replaced!");
             server.crashNotification(this);
@@ -109,7 +112,6 @@ public class Computer extends Entity implements Comparable {
         working = true;
         assigned = false;
         priority = 0;
-        server.removeFromAssignments(this);
         report("Yay, I'm okay now!");
     }
 
@@ -119,7 +121,6 @@ public class Computer extends Entity implements Comparable {
         replacement.setAge(0);
         report(String.format("Computer %d is now my replacement.", Counter.computer - 1));
         entities.add(replacement);
-        server.removeFromAssignments(this);
         die();
     }
 

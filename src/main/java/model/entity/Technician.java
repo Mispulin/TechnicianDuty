@@ -103,7 +103,7 @@ public class Technician extends Entity implements Comparable {
     public void giveUp() {
         report("Gotta give up my assignment...");
         available = true;
-        boss.giveUpNotification(assignment);
+        boss.giveUpNotification(this, assignment);
         assignment = null;
     }
 
@@ -148,15 +148,15 @@ public class Technician extends Entity implements Comparable {
             report("Oh, I can repair this.");
             if (rand.nextDouble() <= ( (double) 1 / EXP_MAX * getExperience() )) {
                 assignment.repair();
-                report("Succesfully repaired.");
+                boss.completedNotification(this);
                 free();
             } else {
                 report("Well, I misjudged the situation, I will need more time.");
             }
         } else if(!assignment.isRepairable()) {
             report("Terrible condition - I have to replace it.");
-            report("Good as new.. well, it is new!");
             assignment.replace(entities);
+            boss.completedNotification(this);
             free();
             report("I'm free.");
         }
@@ -194,36 +194,12 @@ public class Technician extends Entity implements Comparable {
         return (horizontal || vertical);
     }
 
-    private boolean hasObstacle(Location location) {
-        return getEnvironment().getEntityAt(location) != null;
-    }
-
     private void takeShortcut(Location location) {
         Location getTo = place;
         if (!location.equals(getTo)) {
             getTo = new Location(location.getRow() - 1, location.getCol());
         }
         setLocation(getTo);
-    }
-
-    private void goUp() {
-        Location toGo = new Location(getLocation().getRow() - 1, getLocation().getCol());
-        setLocation(toGo);
-    }
-
-    private void goRight() {
-        Location toGo = new Location(getLocation().getRow(), getLocation().getCol() + 1);
-        setLocation(toGo);
-    }
-
-    private void goDown() {
-        Location toGo = new Location(getLocation().getRow() + 1, getLocation().getCol());
-        setLocation(toGo);
-    }
-
-    private void goLeft() {
-        Location toGo = new Location(getLocation().getRow(), getLocation().getCol() - 1);
-        setLocation(toGo);
     }
 
     public void print() {
