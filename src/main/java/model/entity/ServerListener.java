@@ -17,4 +17,6 @@ public interface ServerListener {
     void assignedNotification(Technician technician, Computer computer);
 
     void giveUpNotification(Computer computer);
+
+    void removeFromAssignments(Computer computer);
 }

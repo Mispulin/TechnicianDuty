@@ -46,6 +46,14 @@ public class Server extends Entity implements ServerListener {
 
     @Override
     public void crashNotification(Computer computer) {
+        if (computer.isAssigned()) {
+            report(String.format("%s is already assigned.", computer.getName()));
+            return;
+        }
+        if (assignments.contains(computer)) {
+            report(String.format("%s is already waiting to be assigned.", computer.getName()));
+            return;
+        }
         assignments.add(computer);
         report("Got a crash log! Better assign it to someone!");
     }
@@ -53,7 +61,6 @@ public class Server extends Entity implements ServerListener {
     @Override
     public void assignedNotification(Technician technician, Computer computer) {
         assignments.remove(computer);
-        computer.assign();
         report(String.format("%s assigned to %s.", computer.getName(), technician.getName()));
     }
 
@@ -72,6 +79,13 @@ public class Server extends Entity implements ServerListener {
     @Override
     public void addTechnician(Technician technician) {
         technicians.add(technician);
+    }
+
+    @Override
+    public void removeFromAssignments(Computer computer) {
+        if (assignments.contains(computer)) {
+            assignments.remove(computer);
+        }
     }
 
     public List<Technician> getTechnicians() {

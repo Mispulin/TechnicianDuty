@@ -79,7 +79,7 @@ public class ComputerTest {
                 it.remove();
             }
         }
-        entities.forEach(entity -> entity.print());
+        if (LOG) entities.forEach(entity -> entity.print());
         assertTrue(!entities.contains(computer));
     }
 

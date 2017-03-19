@@ -1,19 +1,19 @@
 # Technician Duty
 A school project for Intelligent Systems course.
 
-##What's it about?
+## What's it about?
 Computers don't always work as they should and that's what technicians are here for! If something goes wrong with computer, a technician is assigned to intervene.
 
-##Model
+## Model
 
-###ENTITY
+### ENTITY
 - alive
 - name
 - environment
 - location
 - reportSelf
 
-###TECHNICIAN extends Entity
+### TECHNICIAN extends Entity
 
 - experience
 - available
@@ -22,7 +22,7 @@ Computers don't always work as they should and that's what technicians are here 
 - workLogs
 - boss
 
-###COMPUTER extends Entity
+### COMPUTER extends Entity
 
 - working
 - priority
@@ -31,7 +31,7 @@ Computers don't always work as they should and that's what technicians are here 
 - logs
 - server
 
-###SERVER extends Entity
+### SERVER extends Entity
 
 - technicians
 - assignments

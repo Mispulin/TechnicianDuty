@@ -3,6 +3,7 @@ package app;
 import model.Randomizer;
 import model.entity.Entity;
 import model.entity.Technician;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
@@ -15,6 +16,13 @@ import static org.junit.Assert.*;
  */
 public class SimulatorTest {
 
+    private static boolean LOG;
+
+    @Before
+    public void init() {
+        LOG = false;
+    }
+
     @Test
     public void isPopulated() {
         int countServers = 1;
@@ -22,7 +30,7 @@ public class SimulatorTest {
         int countComputers = 4;
         Simulator simulator = new Simulator(20, countServers, countTechnicians, countComputers, false);
         simulator.simulateOneStep();
-        simulator.print(simulator.getEntities());
+        if (LOG) simulator.print(simulator.getEntities());
         assertTrue(simulator.getEntities().size() == (countServers + countTechnicians + countComputers));
     }
 
@@ -46,7 +54,7 @@ public class SimulatorTest {
 
     @Test
     public void longSimulation() {
-        Simulator simulator = new Simulator(1, 2, 6, true);
+        Simulator simulator = new Simulator(1, 2, 6, false);
         simulator.runLongSimulation();
     }
 
@@ -59,11 +67,11 @@ public class SimulatorTest {
     @Test
     public void techniciansHistory() {
         Simulator simulator = new Simulator();
-        simulator.simulate(5);
+        simulator.simulate(20);
         List<Technician> technicians = simulator.getTechnicians();
         Random rand = Randomizer.getRandom();
         Technician technician = technicians.get(rand.nextInt(technicians.size()));
-        technician.readLog();
+        if (LOG) technician.readLog();
     }
 
     @Test
@@ -71,7 +79,7 @@ public class SimulatorTest {
         Simulator simulator = new Simulator(false);
         simulator.runLongSimulation();
         assertFalse(simulator.getRetired().isEmpty());
-        simulator.print(simulator.getRetired());
+        if (LOG) simulator.print(simulator.getRetired());
     }
 
     @Test
@@ -79,9 +87,24 @@ public class SimulatorTest {
         Simulator simulator = new Simulator(false);
         simulator.simulate(50);
         List<Entity> current = simulator.getEntities();
-        current.forEach(entity -> entity.print());
-        System.out.println();
+        if (LOG) current.forEach(entity -> entity.print());
+        if (LOG) System.out.println();
         List<Entity> sorted = simulator.sortEntitiesByType();
-        sorted.forEach(entity -> entity.print());
+        if (LOG) sorted.forEach(entity -> entity.print());
+    }
+
+    @Test
+    public void correctCounts() {
+        Simulator simulator = new Simulator(2, 5, 10, false);
+        simulator.simulate(200);
+/*
+        System.out.println(simulator.getServers().size());
+        System.out.println(simulator.getTechnicians().size());
+        System.out.println(simulator.getComputers().size());
+*/
+        assertTrue(simulator.getEntities().size() == (Simulator.countServers + Simulator.countTechnicians + Simulator.countComputers));
+        assertTrue(simulator.getServers().size() == Simulator.countServers);
+        assertTrue(simulator.getTechnicians().size() == Simulator.countTechnicians);
+        assertTrue(simulator.getComputers().size() == Simulator.countComputers);
     }
 }

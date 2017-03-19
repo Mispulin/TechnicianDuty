@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class Simulator {
 
-    private static final int DEFAULT_SIZE = 10;
+    private static final int DEFAULT_SIZE = 15;
     private static int size = DEFAULT_SIZE;
 
     public static int countServers = 1;

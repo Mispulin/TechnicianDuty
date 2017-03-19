@@ -22,14 +22,12 @@ public class ServerTest {
         LOG = false;
     }
 
-
     @Test
     public void getsTechnician() {
         Server server = new Server(environment, new Location(0, 0), LOG);
         Technician technician = new Technician(environment, new Location(0, 2), server, LOG);
         assertTrue(server.getTechnicians().size() == 1);
     }
-
 
     @Test
     public void getsNotification() {
@@ -55,9 +53,31 @@ public class ServerTest {
 
         Computer computer = new Computer(environment, new Location(0, 2), server, LOG);
         computer.breakIt();
+        computer.setPriority(7);
         server.assignWork();
 
         assertEquals(computer, technician1.getAssignment());
+    }
+
+    @Test
+    public void leastExperiencedTechnicianAssignment() {
+        Server server = new Server(environment, new Location(0, 0), LOG);
+
+        Technician technician1 = new Technician(environment, new Location(0, 2), server, LOG);
+        technician1.setExperience(35);
+
+        Technician technician2 = new Technician(environment, new Location(0, 2), server, LOG);
+        technician2.setExperience(25);
+
+        Technician technician3 = new Technician(environment, new Location(0, 2), server, LOG);
+        technician3.setExperience(28);
+
+        Computer computer = new Computer(environment, new Location(0, 2), server, LOG);
+        computer.breakIt();
+        computer.setPriority(3);
+        server.assignWork();
+
+        assertEquals(computer, technician2.getAssignment());
     }
 
     @Test
@@ -125,6 +145,21 @@ public class ServerTest {
         server.assignWork();
 
         assertEquals(false, technician2.isAvailable());
+    }
+
+    @Test
+    public void assignedRemovedFromAssignments() {
+        Server server = new Server(environment, new Location(0, 0), LOG);
+
+        Technician technician1 = new Technician(environment, new Location(0, 2), server, LOG);
+        technician1.setExperience(35);
+
+        Computer computer = new Computer(environment, new Location(2, 5), server, LOG);
+        computer.breakIt();
+        assertTrue(server.getAssignments().size() == 1);
+
+        server.assignWork();
+        assertTrue(server.getAssignments().size() == 0);
     }
 
 }

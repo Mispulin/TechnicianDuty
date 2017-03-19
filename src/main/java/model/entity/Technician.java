@@ -23,9 +23,9 @@ public class Technician extends Entity implements Comparable {
     private Location place;
     private Computer assignment = null;
     private List<WorkLog> workLogs = new ArrayList<>();
-    private ServerListener boss;
+    private Server boss;
 
-    public Technician(Environment environment, Location place, ServerListener boss, boolean reportSelf) {
+    public Technician(Environment environment, Location place, Server boss, boolean reportSelf) {
         super("Technician " + Counter.technician, environment, place, reportSelf);
         Counter.addTechnician();
         experience = rand.nextInt(EXP_MAX - 1) + 1;
@@ -84,6 +84,7 @@ public class Technician extends Entity implements Comparable {
 
     public void assign(Computer computer) {
         boss.assignedNotification(this, computer);
+        computer.assign();
         assignment = computer;
         available = false;
         report(String.format("Got an assignment, bummer... Now at %s and gotta go to %s.", getLocation(), assignment.getLocation()));
@@ -226,7 +227,7 @@ public class Technician extends Entity implements Comparable {
     }
 
     public void print() {
-        System.out.println(String.format("%s, exp: %-5d %s", getName(), getExperience(), getLocation().toString()));
+        System.out.println(String.format("%-15s exp: %-5d %s, %s", getName(), getExperience(), getLocation().toString(), boss.getName()));
     }
 
     @Override

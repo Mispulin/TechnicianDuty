@@ -26,9 +26,9 @@ public class Computer extends Entity implements Comparable {
     private boolean assigned;
     private int age;
     private List<Log> logs;
-    private ServerListener server;
+    private Server server;
 
-    public Computer(Environment environment, Location location, ServerListener server, boolean reportSelf) {
+    public Computer(Environment environment, Location location, Server server, boolean reportSelf) {
         super("Computer " + Counter.computer, environment, location, reportSelf);
         Counter.addComputer();
         working = true;
@@ -39,7 +39,7 @@ public class Computer extends Entity implements Comparable {
         addListener(server);
     }
 
-    public void addListener(ServerListener toAdd) {
+    public void addListener(Server toAdd) {
         server = toAdd;
     }
 
@@ -51,7 +51,7 @@ public class Computer extends Entity implements Comparable {
     }
 
     private void ageUp() {
-        if(age == AGE_MAX + 1) {
+        if (age == AGE_MAX + 1) {
             working = false;
             report("I'm too old, need to be replaced!");
             server.crashNotification(this);
@@ -63,19 +63,26 @@ public class Computer extends Entity implements Comparable {
 
     private void compute() {
         if (working) {
-            if(rand.nextDouble() <= MALFUNCTION_PROBABILITY) {
+            if (rand.nextDouble() <= MALFUNCTION_PROBABILITY) {
                 breakIt();
             } else {
                 report("Working as usual.");
             }
         } else {
             if (isRepairable()) {
-                if (priority <= PRIORITY_MAX && rand.nextDouble() > 0.5) {
-                    priority++;
-                    report("Please, repair me! I really need it!");
+                if (!assigned) {
+                    if (priority <= PRIORITY_MAX && rand.nextDouble() > 0.5) {
+                        priority++;
+                        report("Please, repair me! I really need it!");
+                    } else {
+                        report("Please, repair me!");
+                    }
                 } else {
                     report("Please, repair me!");
                 }
+            } else {
+                setPriority(0);
+                report("OUT OF SERVICE.");
             }
         }
     }
@@ -102,6 +109,7 @@ public class Computer extends Entity implements Comparable {
         working = true;
         assigned = false;
         priority = 0;
+        server.removeFromAssignments(this);
         report("Yay, I'm okay now!");
     }
 
@@ -111,7 +119,12 @@ public class Computer extends Entity implements Comparable {
         replacement.setAge(0);
         report(String.format("Computer %d is now my replacement.", Counter.computer - 1));
         entities.add(replacement);
+        server.removeFromAssignments(this);
         die();
+    }
+
+    public boolean isAssigned() {
+        return assigned;
     }
 
     public void setPriority(int priority) {
@@ -132,7 +145,7 @@ public class Computer extends Entity implements Comparable {
 
     public void breakIt() {
         working = false;
-        if (! (priority > 0)) {
+        if (!(priority > 0)) {
             priority = rand.nextInt(PRIORITY_MAX - 1) + 1;
         }
         report("Oops! Something went wrong.");
@@ -144,16 +157,15 @@ public class Computer extends Entity implements Comparable {
     }
 
     public void print() {
-        System.out.println(String.format("%s, stáří: %-5d %s", getName(), getAge(), getLocation().toString()));
+        System.out.println(String.format("%-15s age: %-5d %s, %s", getName(), getAge(), getLocation().toString(), server.getName()));
     }
 
     @Override
     public int compareTo(Object obj) {
-        if(obj instanceof Computer) {
+        if (obj instanceof Computer) {
             Computer comp = (Computer) obj;
             return Integer.compare(comp.getPriority(), getPriority());
-        }
-        else {
+        } else {
             return -1;
         }
     }
