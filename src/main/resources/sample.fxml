@@ -5,9 +5,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controller">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="428.0" prefWidth="290.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controller">
    <children>
-      <Button fx:id="runSimulation" disable="true" layoutX="19.0" layoutY="342.0" mnemonicParsing="false" onAction="#handleRunSimulation" prefHeight="25.0" prefWidth="128.0" text="Run simulation" />
       <CheckBox fx:id="printLogs" layoutX="20.0" layoutY="261.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="61.0" text="Print" />
       <TextField fx:id="countServers" layoutX="100.0" layoutY="75.0" prefHeight="25.0" prefWidth="50.0" />
       <TextField fx:id="countTechnicians" layoutX="100.0" layoutY="118.0" prefHeight="25.0" prefWidth="50.0" />
@@ -15,16 +14,17 @@
       <Label layoutX="15.0" layoutY="79.0" text="Servers:" />
       <Label layoutX="15.0" layoutY="122.0" text="Technicians" />
       <Label layoutX="16.0" layoutY="166.0" text="Computers" />
-      <Label layoutX="15.0" layoutY="23.0" text="Properties">
+      <Label layoutX="27.0" layoutY="22.0" text="Properties">
          <font>
             <Font name="System Bold" size="23.0" />
          </font>
       </Label>
-      <Label layoutX="259.0" layoutY="32.0" text="Step:" />
-      <Label fx:id="step" layoutX="300.0" layoutY="32.0" text="0" />
       <Label layoutX="21.0" layoutY="213.0" text="Total steps:" />
       <TextField fx:id="steps" layoutX="100.0" layoutY="209.0" prefHeight="25.0" prefWidth="50.0" />
       <CheckBox fx:id="waitLogs" layoutX="100.0" layoutY="261.0" mnemonicParsing="false" text="Wait" />
       <Button fx:id="setupSimulation" layoutX="19.0" layoutY="304.0" mnemonicParsing="false" onAction="#setupSimulation" prefHeight="25.0" prefWidth="128.0" text="Setup simulation" />
+      <Button fx:id="runSimulation" disable="true" layoutX="19.0" layoutY="342.0" mnemonicParsing="false" onAction="#handleRunSimulation" prefHeight="25.0" prefWidth="128.0" text="Run simulation" />
+      <Button fx:id="takeAStep" disable="true" layoutX="19.0" layoutY="381.0" mnemonicParsing="false" onAction="#handleTakeAStep" prefHeight="25.0" prefWidth="128.0" text="Take a step" />
+      <Label fx:id="step" layoutX="210.0" layoutY="31.0" text="Label" />
    </children>
 </Pane>

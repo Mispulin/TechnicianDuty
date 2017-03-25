@@ -15,13 +15,13 @@ public class Simulator {
 
     private static final int DEFAULT_SIZE = 15;
     private static int size = DEFAULT_SIZE;
+    private static boolean LOG = true;
 
-    public static int countServers = 1;
-    public static int countTechnicians = 2;
-    public static int countComputers = 3;
-    public static boolean LOG = true;
-    public static int steps = 10;
-    public static int step = 0;
+    private int countServers = 1;
+    private int countTechnicians = 2;
+    private int countComputers = 3;
+    private int steps = 10;
+    private int step = 0;
 
     private Environment environment = new Environment(size, size);
     private List<Entity> entities = new ArrayList<>();
@@ -111,6 +111,30 @@ public class Simulator {
             }
         }
         entities.addAll(newEntities);
+    }
+
+    public static boolean isLOG() {
+        return LOG;
+    }
+
+    public int getCountServers() {
+        return countServers;
+    }
+
+    public int getCountTechnicians() {
+        return countTechnicians;
+    }
+
+    public int getCountComputers() {
+        return countComputers;
+    }
+
+    public int getSteps() {
+        return steps;
+    }
+
+    public int getStep() {
+        return step;
     }
 
     private void addStep() {

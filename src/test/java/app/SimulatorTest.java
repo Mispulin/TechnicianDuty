@@ -104,10 +104,10 @@ public class SimulatorTest {
         System.out.println(simulator.getTechnicians().size());
         System.out.println(simulator.getComputers().size());
 */
-        assertTrue(simulator.getEntities().size() == (Simulator.countServers + Simulator.countTechnicians + Simulator.countComputers));
-        assertTrue(simulator.getServers().size() == Simulator.countServers);
-        assertTrue(simulator.getTechnicians().size() == Simulator.countTechnicians);
-        assertTrue(simulator.getComputers().size() == Simulator.countComputers);
+        assertTrue(simulator.getEntities().size() == (simulator.getCountServers() + simulator.getCountTechnicians() + simulator.getCountComputers()));
+        assertTrue(simulator.getServers().size() == simulator.getCountServers());
+        assertTrue(simulator.getTechnicians().size() == simulator.getCountTechnicians());
+        assertTrue(simulator.getComputers().size() == simulator.getCountComputers());
     }
 
     @Test

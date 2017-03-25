@@ -18,11 +18,11 @@ import java.util.ResourceBundle;
 public class Controller implements Initializable {
 
     private Simulator simulator;
-    private int servers = Simulator.countServers;
-    private int technicians = Simulator.countTechnicians;
-    private int computers = Simulator.countComputers;
-    private boolean print = Simulator.LOG;
-    private int duration = Simulator.steps;
+    private int servers = 1;
+    private int technicians = 2;
+    private int computers = 3;
+    private boolean print = true;
+    private int duration = 10;
 
     @FXML
     private TextField countServers;
@@ -37,11 +37,13 @@ public class Controller implements Initializable {
     @FXML
     private TextField steps;
     @FXML
-    private Label step;
-    @FXML
     private Button runSimulation;
     @FXML
+    private Button takeAStep;
+    @FXML
     private Button setupSimulation;
+    @FXML
+    private Label step;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -51,11 +53,11 @@ public class Controller implements Initializable {
     }
 
     private void handleSteps() {
-        step.textProperty().setValue(String.valueOf(0));
-        steps.textProperty().setValue(String.valueOf(Simulator.steps));
+        steps.textProperty().setValue("10");
         steps.textProperty().addListener((observable, oldValue, newValue) -> {
             duration = Integer.valueOf(newValue);
             runSimulation.setDisable(true);
+            takeAStep.setDisable(true);
         });
     }
 
@@ -64,6 +66,7 @@ public class Controller implements Initializable {
         printLogs.selectedProperty().addListener((observable, oldValue, newValue) -> {
             print = newValue;
             runSimulation.setDisable(true);
+            takeAStep.setDisable(true);
             waitLogs.selectedProperty().setValue(newValue);
             if (!newValue) {
                 waitLogs.setDisable(true);
@@ -82,18 +85,20 @@ public class Controller implements Initializable {
                 countServers.setText(String.valueOf(number));
                 servers = number;
             }
-            servers = Integer.valueOf(newValue);
             runSimulation.setDisable(true);
+            takeAStep.setDisable(true);
+            servers = Integer.valueOf(newValue);
         });
         countTechnicians.appendText(String.valueOf(technicians));
         countTechnicians.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
                 int number = Integer.valueOf(newValue.replaceAll("[^\\d]", ""));
-                countTechnicians.setText(String.valueOf(number));
                 technicians = number;
+                countTechnicians.setText(String.valueOf(number));
             }
             technicians = Integer.valueOf(newValue);
             runSimulation.setDisable(true);
+            takeAStep.setDisable(true);
         });
         countComputers.appendText(String.valueOf(computers));
         countComputers.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -104,6 +109,7 @@ public class Controller implements Initializable {
             }
             computers = Integer.valueOf(newValue);
             runSimulation.setDisable(true);
+            takeAStep.setDisable(true);
         });
     }
 
@@ -111,13 +117,14 @@ public class Controller implements Initializable {
     protected void setupSimulation(ActionEvent event) {
         simulator = new Simulator(servers, technicians, computers, print);
         runSimulation.setDisable(false);
+        takeAStep.setDisable(false);
+        step.textProperty().setValue("0");
     }
 
     @FXML
     protected void handleRunSimulation(ActionEvent event) {
         for (int i = 1; i <= duration; i++) {
-            simulator.simulateOneStep();
-            step.textProperty().setValue(String.valueOf(i));
+            handleTakeAStep(event);
             if (waitLogs.isSelected()) {
                 try {
                     Thread.sleep(500);
@@ -128,5 +135,10 @@ public class Controller implements Initializable {
         }
     }
 
+    @FXML
+    protected void handleTakeAStep(ActionEvent event) {
+        simulator.simulateOneStep();
+        step.textProperty().set(String.valueOf(simulator.getStep()));
+    }
 
 }
