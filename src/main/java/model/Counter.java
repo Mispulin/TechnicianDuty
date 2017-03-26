@@ -21,4 +21,10 @@ public class Counter {
         computer++;
     }
 
+    public static void reset() {
+        server = 1;
+        technician = 1;
+        computer = 1;
+    }
+
 }

@@ -1,14 +1,15 @@
 package app;
 
-import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-
+import model.Counter;
+import app.thread.SimulationThread;
+import app.thread.GuiThread;
+import app.thread.StopSimulationThread;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -23,6 +24,9 @@ public class Controller implements Initializable {
     private int computers = 3;
     private boolean print = true;
     private int duration = 10;
+    private SimulationThread simulationThread;
+    private StopSimulationThread stopSimulation;
+    private GuiThread guiControl;
 
     @FXML
     private TextField countServers;
@@ -40,6 +44,10 @@ public class Controller implements Initializable {
     private Button runSimulation;
     @FXML
     private Button takeAStep;
+    @FXML
+    private Button pause;
+    @FXML
+    private Button stopSim;
     @FXML
     private Button setupSimulation;
     @FXML
@@ -114,31 +122,58 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    protected void setupSimulation(ActionEvent event) {
+    protected void setupSimulation() {
+        Counter.reset();
         simulator = new Simulator(servers, technicians, computers, print);
         runSimulation.setDisable(false);
         takeAStep.setDisable(false);
+        pause.setDisable(true);
+        stopSim.setDisable(true);
         step.textProperty().setValue("0");
     }
 
     @FXML
-    protected void handleRunSimulation(ActionEvent event) {
-        for (int i = 1; i <= duration; i++) {
-            handleTakeAStep(event);
-            if (waitLogs.isSelected()) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+    protected void handleRunSimulation() {
+        stopSim.setDisable(false);
+        pause.setDisable(false);
+        takeAStep.setDisable(true);
+        runSimulation.setDisable(true);
+        setupSimulation.setDisable(true);
+        guiControl = new GuiThread(step);
+        simulationThread = new SimulationThread(simulator, duration, guiControl);
+        stopSimulation = new StopSimulationThread(simulationThread);
+        stopSimulation.start();
+        guiControl.start();
+        simulationThread.start();
     }
 
     @FXML
-    protected void handleTakeAStep(ActionEvent event) {
+    protected void handleTakeAStep() {
+        runSimulation.setDisable(true);
         simulator.simulateOneStep();
         step.textProperty().set(String.valueOf(simulator.getStep()));
+    }
+
+    @FXML
+    protected void handleStopSimulation() {
+        stopSimulation.stopSimulation();
+        runSimulation.setDisable(true);
+        takeAStep.setDisable(true);
+        runSimulation.setDisable(true);
+        setupSimulation.setDisable(false);
+        stopSim.setDisable(true);
+        pause.setDisable(true);
+    }
+
+    @FXML
+    protected void handlePauseSimulation() {
+        if (pause.textProperty().getValue().equals("Pause")) {
+            stopSimulation.stopSimulation();
+            pause.textProperty().set("Continue");
+        } else {
+            handleRunSimulation();
+            pause.textProperty().set("Pause");
+        }
     }
 
 }
