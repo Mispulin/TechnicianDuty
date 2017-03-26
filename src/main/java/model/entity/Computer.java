@@ -116,12 +116,11 @@ public class Computer extends Entity implements Comparable {
     }
 
     public void replace(List<Entity> entities) {
-        Location place = getLocation();
-        Computer replacement = new Computer(getEnvironment(), place, server, getReportSelf());
+        Computer replacement = new Computer(getEnvironment(), getLocation(), server, getReportSelf());
+        die();
         replacement.setAge(0);
         report(String.format("Computer %d is now my replacement.", Counter.computer - 1));
         entities.add(replacement);
-        die();
     }
 
     public boolean isAssigned() {

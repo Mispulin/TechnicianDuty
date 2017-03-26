@@ -41,6 +41,8 @@
                </font>
             </Label>
             <MeshView layoutX="325.0" layoutY="235.0" AnchorPane.rightAnchor="159.0" />
+            <GridPane fx:id="matrix" layoutX="200.0" layoutY="116.0" prefHeight="250.0" prefWidth="250.0">
+            </GridPane>
          </children>
       </AnchorPane>
   </items>

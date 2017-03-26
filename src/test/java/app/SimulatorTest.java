@@ -30,7 +30,7 @@ public class SimulatorTest {
         int countServers = 1;
         int countTechnicians = 2;
         int countComputers = 4;
-        Simulator simulator = new Simulator(20, countServers, countTechnicians, countComputers, false);
+        Simulator simulator = new Simulator(countServers, countTechnicians, countComputers, false);
         simulator.simulateOneStep();
         if (LOG) simulator.print(simulator.getEntities());
         assertTrue(simulator.getEntities().size() == (countServers + countTechnicians + countComputers));
@@ -38,7 +38,7 @@ public class SimulatorTest {
 
     @Test
     public void twoSteps() {
-        Simulator simulator = new Simulator();
+        Simulator simulator = new Simulator(false);
         simulator.simulate(2);
     }
 
@@ -56,7 +56,7 @@ public class SimulatorTest {
 
     @Test
     public void longSimulation() {
-        Simulator simulator = new Simulator(1, 2, 6, true);
+        Simulator simulator = new Simulator(1, 2, 6, false);
         simulator.runLongSimulation();
     }
 
@@ -68,7 +68,7 @@ public class SimulatorTest {
 
     @Test
     public void techniciansHistory() {
-        Simulator simulator = new Simulator();
+        Simulator simulator = new Simulator(false);
         simulator.simulate(20);
         List<Technician> technicians = simulator.getTechnicians();
         Random rand = Randomizer.getRandom();
@@ -115,7 +115,7 @@ public class SimulatorTest {
         Simulator simulator = new Simulator(1, 3, 7, false);
         simulator.simulate(500);
         System.out.println();
-        simulator.getServers().get(0).printCurrentTasks();
+        if (LOG) simulator.getServers().get(0).printCurrentTasks();
     }
 
     @Test
@@ -138,4 +138,19 @@ public class SimulatorTest {
             }
         });
     }
+
+    @Test
+    public void printField() {
+        Simulator simulator = new Simulator(1, 2, 3, false);
+        simulator.simulate(25);
+        simulator.getEnvironment().print();
+    }
+
+    @Test
+    public void printEntities() {
+        Simulator simulator = new Simulator(1, 2, 3, false);
+        simulator.simulate(25);
+        simulator.print(simulator.getEntities());
+    }
+
 }

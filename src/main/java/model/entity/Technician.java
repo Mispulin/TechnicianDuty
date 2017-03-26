@@ -80,6 +80,7 @@ public class Technician extends Entity implements Comparable {
         Technician replacement = new Technician(getEnvironment(), getLocation(), boss, getReportSelf());
         entities.add(replacement);
         report(String.format("Technician %d is now my replacement.", Counter.technician - 1));
+        die();
     }
 
     public void assign(Computer computer) {
@@ -94,10 +95,9 @@ public class Technician extends Entity implements Comparable {
         if (!available) {
             giveUp();
         }
-        findReplacement(entities);
         report("I'm too old for this - bye!");
         boss.retireTechnician(this);
-        die();
+        findReplacement(entities);
     }
 
     public void giveUp() {
@@ -197,7 +197,10 @@ public class Technician extends Entity implements Comparable {
     private void takeShortcut(Location location) {
         Location getTo = place;
         if (!location.equals(getTo)) {
-            getTo = new Location(location.getRow() - 1, location.getCol());
+            int row = location.getRow() - 1;
+            row = (row >= 0 && row < getEnvironment().getWidth()) ? row : location.getRow() + 1;
+            int col = location.getCol();
+            getTo = new Location(row, col);
         }
         setLocation(getTo);
     }

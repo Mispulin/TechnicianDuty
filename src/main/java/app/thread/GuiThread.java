@@ -2,7 +2,6 @@ package app.thread;
 
 import javafx.application.Platform;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 
 /**
  * Created by Mish.k.a on 26. 3. 2017.
@@ -21,11 +20,7 @@ public class GuiThread extends Thread {
     }
 
     public void updateGUI(int step) {
-        Platform.runLater(
-                () -> {
-                    label.setText(String.valueOf(step));
-                }
-        );
+        Platform.runLater(() -> label.setText(String.valueOf(step)));
     }
 
 }
