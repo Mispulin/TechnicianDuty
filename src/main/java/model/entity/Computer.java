@@ -59,9 +59,10 @@ public class Computer extends Entity implements Comparable {
             report("I'm too old, need to be replaced!");
             server.crashNotification(this);
             age++;
-        } else {
+        } else if (working) {
             age++;
         }
+        // I freeze it when on assignment.
     }
 
     private void compute() {
@@ -116,12 +117,11 @@ public class Computer extends Entity implements Comparable {
     }
 
     public void replace(List<Entity> entities) {
-        Location place = getLocation();
-        Computer replacement = new Computer(getEnvironment(), place, server, getReportSelf());
+        die();
+        Computer replacement = new Computer(getEnvironment(), getLocation(), server, getReportSelf());
         replacement.setAge(0);
         report(String.format("Computer %d is now my replacement.", Counter.computer - 1));
         entities.add(replacement);
-        die();
     }
 
     public boolean isAssigned() {

@@ -5,3 +5,33 @@
     -fx-background: rgb(238, 238, 238);
     -fx-border-color: transparent;
 }
+
+.grid, .cell, .server, .technician, .computer {
+    -fx-border-color: #696969;
+    -fx-border-width: 1px;
+}
+
+.server, .technician, .computer {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+}
+
+.server {
+    -fx-background-color: #535257;
+}
+
+.technician {
+    -fx-background-color: #0478bf;
+}
+
+.computer {
+    -fx-background-color: #01a346;
+}
+
+.computer.broken {
+    -fx-background-color: #8f1e0e;
+}
+
+.logArea {
+    -fx-font-family: monospace;
+}

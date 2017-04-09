@@ -70,16 +70,20 @@ public class Technician extends Entity implements Comparable {
     }
 
     private void ageUp(List<Entity> entities) {
-        experience++;
-        if (experience >= EXP_MAX) {
-            retire(entities);
+        // I freeze it when on assignment.
+        if (available) {
+            experience++;
+            if (experience >= EXP_MAX) {
+                retire(entities);
+            }
         }
     }
 
     private void findReplacement(List<Entity> entities) {
-        Technician replacement = new Technician(getEnvironment(), getLocation(), boss, getReportSelf());
+        die();
+        Technician replacement = new Technician(getEnvironment(), place, boss, getReportSelf());
         entities.add(replacement);
-        report(String.format("Technician %d is now my replacement.", Counter.technician - 1));
+        report(String.format("Technician %d will be my replacement.", Counter.technician - 1));
     }
 
     public void assign(Computer computer) {
@@ -94,10 +98,9 @@ public class Technician extends Entity implements Comparable {
         if (!available) {
             giveUp();
         }
-        findReplacement(entities);
         report("I'm too old for this - bye!");
         boss.retireTechnician(this);
-        die();
+        findReplacement(entities);
     }
 
     public void giveUp() {
@@ -197,7 +200,10 @@ public class Technician extends Entity implements Comparable {
     private void takeShortcut(Location location) {
         Location getTo = place;
         if (!location.equals(getTo)) {
-            getTo = new Location(location.getRow() - 1, location.getCol());
+            int row = location.getRow() - 1;
+            row = (row >= 0 && row < getEnvironment().getWidth()) ? row : location.getRow() + 1;
+            int col = location.getCol();
+            getTo = new Location(row, col);
         }
         setLocation(getTo);
     }

@@ -108,4 +108,15 @@ public class Environment {
         return locations;
     }
 
+    public void print() {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                String entity = getEntityAt(i, j) != null ? getEntityAt(i, j).getName() : "";
+                String location = "[" + i + ", " + j + "]";
+                System.out.print(String.format("%s %-15s", location, entity));
+                // System.out.print(String.format("%-15s", entity));
+            }
+            System.out.println();
+        }
+    }
 }
