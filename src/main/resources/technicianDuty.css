@@ -29,5 +29,9 @@
 }
 
 .computer.broken {
-    -fx-background-color: #7a1d0d;
+    -fx-background-color: #8f1e0e;
+}
+
+.logArea {
+    -fx-font-family: monospace;
 }

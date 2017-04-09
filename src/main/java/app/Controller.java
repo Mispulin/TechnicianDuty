@@ -61,6 +61,8 @@ public class Controller implements Initializable {
     private Label step;
     @FXML
     private GridPane matrix;
+    @FXML
+    private TextArea logArea;
 
     private Label[][] field = new Label[matrixSize][matrixSize];
 
@@ -190,6 +192,8 @@ public class Controller implements Initializable {
     @FXML
     protected void setupSimulation() {
         Counter.reset();
+        logArea.setText("");
+        logArea.getStyleClass().add("logArea");
         simulator = new Simulator(matrixSize, servers, technicians, computers, print);
         runSimulation.setDisable(false);
         takeAStep.setDisable(false);
@@ -231,7 +235,7 @@ public class Controller implements Initializable {
         runSimulation.setDisable(true);
         step.setText(String.valueOf(simulator.getStep()));
         simulator.simulateOneStep();
-        simulator.getEnvironment().print();
+        // simulator.getEnvironment().print();
         Platform.runLater(() -> {
             for (int k = 0; k < matrixSize; k++) {
                 for (int j = 0; j < matrixSize; j++) {
