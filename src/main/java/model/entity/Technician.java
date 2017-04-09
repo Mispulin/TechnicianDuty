@@ -70,17 +70,20 @@ public class Technician extends Entity implements Comparable {
     }
 
     private void ageUp(List<Entity> entities) {
-        experience++;
-        if (experience >= EXP_MAX) {
-            retire(entities);
+        // I freeze it when on assignment.
+        if (available) {
+            experience++;
+            if (experience >= EXP_MAX) {
+                retire(entities);
+            }
         }
     }
 
     private void findReplacement(List<Entity> entities) {
-        Technician replacement = new Technician(getEnvironment(), getLocation(), boss, getReportSelf());
-        entities.add(replacement);
-        report(String.format("Technician %d is now my replacement.", Counter.technician - 1));
         die();
+        Technician replacement = new Technician(getEnvironment(), place, boss, getReportSelf());
+        entities.add(replacement);
+        report(String.format("Technician %d will be my replacement.", Counter.technician - 1));
     }
 
     public void assign(Computer computer) {

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class Simulator {
 
     private static final int DEFAULT_SIZE = 10;
-    private static int size = DEFAULT_SIZE;
+    private int size = DEFAULT_SIZE;
     private static boolean LOG = true;
 
     private int countServers = 1;
@@ -34,9 +34,9 @@ public class Simulator {
         this(DEFAULT_SIZE, report);
     }
 
-    public Simulator(int size, boolean report) {
-        if (size > 0) {
-            this.size = size;
+    public Simulator(int newSize, boolean report) {
+        if (newSize > 0) {
+            size = newSize;
         }
         LOG = report;
         environment = new Environment(size, size);
@@ -51,11 +51,12 @@ public class Simulator {
         setup();
     }
 
-    public Simulator(int size, int serv, int tech, int comp, boolean report) {
+    public Simulator(int newSize, int serv, int tech, int comp, boolean report) {
         countTechnicians = tech;
         countComputers = comp;
         countServers = serv;
         LOG = report;
+        size = newSize;
         environment = new Environment(size, size);
         setup();
     }
@@ -130,6 +131,10 @@ public class Simulator {
 
     public Environment getEnvironment() {
         return environment;
+    }
+
+    public int getSize() {
+        return size;
     }
 
     public int getStep() {

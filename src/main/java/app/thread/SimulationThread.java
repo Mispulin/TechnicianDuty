@@ -3,6 +3,7 @@ package app.thread;
 import app.Controller;
 import app.Simulator;
 import javafx.application.Platform;
+import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 
 /**
@@ -11,12 +12,12 @@ import javafx.scene.text.Text;
 public class SimulationThread extends Thread {
 
     private Simulator simulator;
-    private int duration = 10;
+    private int duration = 25;
     private boolean isRunning = false;
     private GuiThread guiControl;
-    private Text[][] field;
+    private Label[][] field;
 
-    public SimulationThread(Simulator simulator, int duration, GuiThread guiControl, Text[][] field) {
+    public SimulationThread(Simulator simulator, int duration, GuiThread guiControl, Label[][] field) {
         this.simulator = simulator;
         this.duration = duration;
         this.guiControl = guiControl;
@@ -39,8 +40,8 @@ public class SimulationThread extends Thread {
             guiControl.updateGUI(simulator.getStep());
             simulator.simulateOneStep();
             Platform.runLater(() -> {
-                for (int k = 0; k < 10; k++) {
-                    for (int j = 0; j < 10; j++) {
+                for (int k = 0; k < simulator.getSize(); k++) {
+                    for (int j = 0; j < simulator.getSize(); j++) {
                         field[k][j] = Controller.createEntityMark(field[k][j], simulator.getEnvironment().getEntityAt(k, j));
                     }
                 }

@@ -3,6 +3,7 @@ package app;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -30,8 +31,11 @@ public class Controller implements Initializable {
     private int technicians = 2;
     private int computers = 3;
     private boolean print = true;
-    private int duration = 10;
+    private int duration = 25;
     private StopSimulationThread stopSimulation;
+    private static int matrixSize = 15;
+    private static double cellWidth = 30;
+    private static double cellHeight = 25;
 
     @FXML
     private TextField countServers;
@@ -58,7 +62,7 @@ public class Controller implements Initializable {
     @FXML
     private GridPane matrix;
 
-    private Text[][] field = new Text[10][10];
+    private Label[][] field = new Label[matrixSize][matrixSize];
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -69,7 +73,7 @@ public class Controller implements Initializable {
     }
 
     private void handleSteps() {
-        steps.setText("10");
+        steps.setText(String.valueOf(duration));
         steps.textProperty().addListener((observable, oldValue, newValue) -> {
             int val = validNumber(newValue);
             val = val > 1000 ? 1000 : val;
@@ -128,59 +132,78 @@ public class Controller implements Initializable {
     }
 
     private void handleMatrix() {
-        matrix.setGridLinesVisible(true);
-        final int numCols = 10;
-        final int numRows = 10;
-        for (int i = 0; i < numCols; i++) {
+        matrix.getStyleClass().add("grid");
+        for (int i = 0; i < matrixSize; i++) {
             ColumnConstraints colConst = new ColumnConstraints();
-            colConst.setPercentWidth(100.0 / numCols);
+            colConst.setPrefWidth(cellWidth);
             matrix.getColumnConstraints().add(colConst);
         }
-        for (int i = 0; i < numRows; i++) {
+        for (int i = 0; i < matrixSize; i++) {
             RowConstraints rowConst = new RowConstraints();
-            rowConst.setPercentHeight(100.0 / numRows);
+            rowConst.setPrefHeight(cellHeight);
             matrix.getRowConstraints().add(rowConst);
         }
+        Platform.runLater(() -> {
+            for (int i = 0; i < matrixSize; i++) {
+                for (int j = 0; j < matrixSize; j++) {
+                    field[i][j] = createEntityMark(new Label (""), null);
+                    matrix.add(field[i][j], j, i);
+                }
+            }
+        });
     }
 
-    public static Text createEntityMark(Text old, Entity entity) {
-        Text text = old;
+    public static Label createEntityMark(Label old, Entity entity) {
+        Label label = old;
         old.setText("");
+        label.setPrefWidth(cellWidth);
+        label.setPrefHeight(cellHeight);
         if (entity != null) {
             String name = entity.getName();
             String number = name.charAt(0) + "" + String.valueOf(validNumber(name));
-            text.setText(number);
+            label.setText(number);
+            label.setAlignment(Pos.CENTER);
             if (entity instanceof Server) {
-                text.setFill(Color.BLACK);
-                return text;
+                label.getStyleClass().add("server");
+                return label;
             }
             if (entity instanceof Technician) {
-                text.setFill(Color.BLUE);
-                return text;
+                label.getStyleClass().add("technician");
+                return label;
             }
             if (entity instanceof Computer) {
-                text.setFill(Color.GREEN);
-                return text;
+                if (((Computer) entity).getWorking()) {
+                    label.getStyleClass().clear();
+                } else {
+                    label.getStyleClass().add("broken");
+                }
+                label.getStyleClass().add("computer");
+                return label;
             }
+        } else {
+            label.getStyleClass().clear();
+            label.getStyleClass().add("cell");
         }
-        return text;
+        return label;
     }
 
     @FXML
     protected void setupSimulation() {
         Counter.reset();
-        simulator = new Simulator(servers, technicians, computers, print);
+        simulator = new Simulator(matrixSize, servers, technicians, computers, print);
         runSimulation.setDisable(false);
         takeAStep.setDisable(false);
         pause.setDisable(true);
         stopSim.setDisable(true);
         step.setText("0");
-        field = new Text[10][10];
         Platform.runLater(() -> {
-            for (int i = 0; i < 10; i++) {
-                for (int j = 0; j < 10; j++) {
+            for (int i = 0; i < matrixSize; i++) {
+                for (int j = 0; j < matrixSize; j++) {
                     Entity entity = simulator.getEnvironment().getEntityAt(i, j);
-                    field[i][j] = createEntityMark(new Text(""), entity);
+                    if (field[i][j] != null) {
+                        matrix.getChildren().remove(field[i][j]);
+                    }
+                    field[i][j] = createEntityMark(new Label (""), entity);
                     matrix.add(field[i][j], j, i);
                 }
             }
@@ -208,9 +231,10 @@ public class Controller implements Initializable {
         runSimulation.setDisable(true);
         step.setText(String.valueOf(simulator.getStep()));
         simulator.simulateOneStep();
+        simulator.getEnvironment().print();
         Platform.runLater(() -> {
-            for (int k = 0; k < 10; k++) {
-                for (int j = 0; j < 10; j++) {
+            for (int k = 0; k < matrixSize; k++) {
+                for (int j = 0; j < matrixSize; j++) {
                     Entity entity = simulator.getEnvironment().getEntityAt(k, j);
                     field[k][j] = Controller.createEntityMark(field[k][j], entity);
                 }
