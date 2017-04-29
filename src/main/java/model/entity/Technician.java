@@ -116,7 +116,6 @@ public class Technician extends Entity implements Comparable {
     }
 
     private void go(Location location) {
-        if (!isAt(location)) {
             /*
             if ((getLocation().getRow() == location.getRow())) {
                 if (getLocation().getCol() < location.getCol()) {
@@ -135,33 +134,30 @@ public class Technician extends Entity implements Comparable {
                 Location diff = getLocation().diff(location);
             }
             */
-            takeShortcut(location);
-        } else {
-            report("I'm here.");
-        }
+        takeShortcut(location);
     }
 
     private void free() {
         available = true;
         assignment = null;
+        report("I'm free.");
     }
 
     private void doWork(List<Entity> entities) {
         if (assignment.isRepairable()) {
             report("Oh, I can repair this.");
-            if (rand.nextDouble() <= ( (double) 1 / EXP_MAX * getExperience() )) {
+            if (rand.nextDouble() <= ((double) 1 / EXP_MAX * getExperience())) {
                 assignment.repair();
                 boss.completedNotification(this);
                 free();
             } else {
                 report("Well, I misjudged the situation, I will need more time.");
             }
-        } else if(!assignment.isRepairable()) {
+        } else if (!assignment.isRepairable()) {
             report("Terrible condition - I have to replace it.");
             assignment.replace(entities);
             boss.completedNotification(this);
             free();
-            report("I'm free.");
         }
     }
 
@@ -214,11 +210,10 @@ public class Technician extends Entity implements Comparable {
 
     @Override
     public int compareTo(Object obj) {
-        if(obj instanceof Technician) {
+        if (obj instanceof Technician) {
             Technician tech = (Technician) obj;
             return Integer.compare(tech.getExperience(), getExperience());
-        }
-        else {
+        } else {
             return -1;
         }
     }
