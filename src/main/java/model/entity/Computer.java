@@ -52,16 +52,16 @@ public class Computer extends Entity implements Comparable {
 
     private void ageUp() {
         if (age == AGE_MAX && working) {
-            // Why only working? Cause there's no need for now working computer to send another crash notification.
-            // When technician get to the computer, he will find out that the computer is too old and he will replace it.
+            // Why only working? Cause there's no need for not working computer to send another crash notification.
+            // When a technician gets to the computer, he will find out that the computer is too old and he will replace it.
             // Also... it's not working so it doesn't do anything anymore.
             working = false;
             report("I'm too old, need to be replaced!");
             server.crashNotification(this);
         } else if (working) {
+            // I freeze it when broken.
             age++;
         }
-        // I freeze it when on assignment.
     }
 
     private void compute() {
