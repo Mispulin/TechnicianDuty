@@ -116,24 +116,7 @@ public class Technician extends Entity implements Comparable {
     }
 
     private void go(Location location) {
-            /*
-            if ((getLocation().getRow() == location.getRow())) {
-                if (getLocation().getCol() < location.getCol()) {
-                    goRight();
-                } else {
-                    goLeft();
-                }
-            } else if ((getLocation().getCol() == location.getCol())) {
-                if (getLocation().getRow() < location.getRow()) {
-                    goUp();
-                } else {
-                    goDown();
-                }
-            } else {
-                // not the same row or column so pick the lower distance and then the higher
-                Location diff = getLocation().diff(location);
-            }
-            */
+        // TODO: Take a step to the location instead of shortcut
         takeShortcut(location);
     }
 
