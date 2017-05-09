@@ -1,64 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.shape.MeshView?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<SplitPane dividerPositions="0.6701030927835051" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="778.0" prefWidth="746.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controller">
-  <items>
-    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="471.0" prefWidth="744.0">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="713.0" prefWidth="1217.0" styleClass="rootComponent" stylesheets="@technicianDuty.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controller">
+   <children>
+      <AnchorPane layoutX="665.0" prefHeight="609.0" prefWidth="552.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="665.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <SplitPane dividerPositions="0.35286284953395475" layoutX="-6.0" layoutY="-7.0" prefHeight="524.0" prefWidth="759.0">
-               <items>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="158.0" prefWidth="214.0">
-                     <children>
-                        <CheckBox fx:id="printLogs" layoutX="24.0" layoutY="303.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="84.0" text="Print" />
-                        <TextField fx:id="steps" layoutX="154.0" layoutY="244.0" prefHeight="25.0" prefWidth="84.0" />
-                        <Label layoutX="24.0" layoutY="248.0" text="Total steps:" />
-                        <Label layoutX="24.0" layoutY="194.0" text="Computers" />
-                        <TextField fx:id="countComputers" layoutX="154.0" layoutY="190.0" prefHeight="25.0" prefWidth="84.0" />
-                        <TextField fx:id="countTechnicians" layoutX="155.0" layoutY="138.0" prefHeight="25.0" prefWidth="84.0" />
-                        <Label layoutX="24.0" layoutY="138.0" text="Technicians" />
-                        <Label layoutX="23.0" layoutY="86.0" text="Servers:" />
-                        <TextField fx:id="countServers" layoutX="156.0" layoutY="82.0" prefHeight="25.0" prefWidth="84.0" />
-                        <Label layoutX="75.0" layoutY="28.0" text="Properties">
-                           <font>
-                              <Font name="System Bold" size="23.0" />
-                           </font>
-                        </Label>
-                        <Button fx:id="setupSimulation" layoutX="155.0" layoutY="299.0" mnemonicParsing="false" onAction="#setupSimulation" prefHeight="25.0" prefWidth="84.0" text="Setup" />
-                     </children>
-                  </AnchorPane>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="410.0" prefWidth="445.0">
-                     <children>
-                        <Label layoutX="177.0" layoutY="63.0" text="Step:" />
-                        <Label fx:id="step" alignment="CENTER_RIGHT" layoutX="242.0" layoutY="63.0" prefHeight="17.0" prefWidth="51.0" text="0" />
-                        <Button fx:id="takeAStep" disable="true" layoutX="28.0" layoutY="117.0" mnemonicParsing="false" onAction="#handleTakeAStep" prefHeight="25.0" prefWidth="100.0" text="One step" />
-                        <Button fx:id="pause" disable="true" layoutX="243.0" layoutY="117.0" mnemonicParsing="false" onAction="#handlePauseSimulation" prefHeight="25.0" prefWidth="100.0" text="Pause" />
-                        <Button fx:id="stopSim" disable="true" layoutX="350.0" layoutY="117.0" mnemonicParsing="false" onAction="#handleStopSimulation" prefHeight="25.0" prefWidth="100.0" text="Stop" />
-                        <Button fx:id="runSimulation" disable="true" layoutX="136.0" layoutY="117.0" mnemonicParsing="false" onAction="#handleRunSimulation" prefHeight="25.0" prefWidth="100.0" text="Run" />
-                        <Label layoutX="177.0" layoutY="25.0" text="Simulation">
-                           <font>
-                              <Font name="System Bold" size="23.0" />
-                           </font>
-                        </Label>
-                        <MeshView layoutX="325.0" layoutY="235.0" AnchorPane.rightAnchor="159.0" />
-                        <GridPane fx:id="matrix" layoutX="30.0" layoutY="170.0" prefHeight="331.0" prefWidth="418.0" />
-                     </children>
-                  </AnchorPane>
-               </items>
-            </SplitPane>
-         </children></AnchorPane>
-    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="277.0" prefWidth="744.0">
+            <HBox alignment="CENTER" fillHeight="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Label text="Simulace">
+                     <styleClass>
+                        <String fx:value="lbl" />
+                        <String fx:value="headline" />
+                     </styleClass>
+                  </Label>
+               </children>
+            </HBox>
+            <StackPane fx:id="gridWrapper" layoutX="40.0" layoutY="79.0" prefHeight="530.0" prefWidth="512.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="59.0" />
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding></AnchorPane>
+      <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="609.0" prefWidth="571.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <TextArea fx:id="logArea" disable="true" layoutX="-5.0" layoutY="-1.0" prefHeight="260.0" prefWidth="752.0" />
-         </children></AnchorPane>
-  </items>
-</SplitPane>
+            <VBox prefHeight="609.0" prefWidth="434.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <HBox alignment="CENTER" fillHeight="false">
+                     <children>
+                        <Label text="Vlastnosti">
+                           <styleClass>
+                              <String fx:value="lbl" />
+                              <String fx:value="headline" />
+                           </styleClass>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <GridPane hgap="5.0" prefHeight="246.0" prefWidth="443.0" vgap="10.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="135.0" minWidth="10.0" prefWidth="103.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="177.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="60.0" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="60.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="60.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="60.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label styleClass="lbl" text="Servery" />
+                        <TextField fx:id="countServers" styleClass="tf" text="2" GridPane.columnIndex="1" />
+                        <Label styleClass="lbl" text="Počítače" GridPane.rowIndex="2" />
+                        <TextField fx:id="countComputers" prefWidth="308.0" styleClass="tf" text="2" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label styleClass="lbl" text="Technici" GridPane.rowIndex="1" />
+                        <TextField fx:id="countTechnicians" styleClass="tf" text="2" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label styleClass="lbl" text="Počet kroků" GridPane.rowIndex="3" />
+                        <TextField fx:id="steps" prefWidth="303.0" styleClass="tf" text="10" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                     </children>
+                  </GridPane>
+                  <HBox alignment="TOP_RIGHT" fillHeight="false" prefWidth="200.0">
+                     <children>
+                        <Label fx:id="step" alignment="CENTER" contentDisplay="CENTER" prefHeight="66.0" prefWidth="474.0" styleClass="lbl" text="Krok" textAlignment="CENTER" />
+                        <Button fx:id="setupSimulation" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#setupSimulation" prefHeight="52.0" prefWidth="184.0" styleClass="btn" text="Generovat" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" fillHeight="false" prefWidth="200.0" spacing="10.0">
+                     <children>
+                        <Button fx:id="takeAStep" alignment="CENTER" contentDisplay="CENTER" disable="true" minWidth="150.0" mnemonicParsing="false" onAction="#handleTakeAStep" styleClass="btn" text="Krok" textAlignment="CENTER" />
+                        <Button fx:id="runSimulation" alignment="CENTER" contentDisplay="CENTER" disable="true" minWidth="150.0" mnemonicParsing="false" onAction="#handleRunSimulation" styleClass="btn" text="Spustit" textAlignment="CENTER" />
+                        <Button fx:id="pause" alignment="CENTER" contentDisplay="CENTER" disable="true" minWidth="150.0" mnemonicParsing="false" onAction="#handlePauseSimulation" styleClass="btn" text="Přerušit" />
+                        <Button fx:id="stopSim" alignment="CENTER" contentDisplay="CENTER" disable="true" minWidth="150.0" mnemonicParsing="false" onAction="#handleStopSimulation" styleClass="btn" text="Zastavit" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" fillHeight="false">
+                     <children>
+                        <Label text="Výpis">
+                           <styleClass>
+                              <String fx:value="lbl" />
+                              <String fx:value="headline" />
+                           </styleClass>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="consolePanel" VBox.vgrow="ALWAYS">
+                     <children>
+                        <TextArea fx:id="logArea" editable="false" prefHeight="200.0" prefWidth="200.0" styleClass="log" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children></AnchorPane>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </VBox>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

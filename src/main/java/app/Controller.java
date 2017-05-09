@@ -1,6 +1,9 @@
 package app;
 
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -8,6 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import model.Counter;
@@ -26,16 +30,7 @@ import java.util.ResourceBundle;
  */
 public class Controller implements Initializable {
 
-    private Simulator simulator;
-    private int servers = 1;
-    private int technicians = 2;
-    private int computers = 3;
-    private boolean print = true;
-    private int duration = 25;
-    private StopSimulationThread stopSimulation;
-    private static int matrixSize = 15;
-    private static double cellWidth = 30;
-    private static double cellHeight = 25;
+    public static Controller instance;
 
     @FXML
     private TextField countServers;
@@ -43,8 +38,6 @@ public class Controller implements Initializable {
     private TextField countTechnicians;
     @FXML
     private TextField countComputers;
-    @FXML
-    private CheckBox printLogs;
     @FXML
     private TextField steps;
     @FXML
@@ -60,20 +53,104 @@ public class Controller implements Initializable {
     @FXML
     private Label step;
     @FXML
-    private GridPane matrix;
-    @FXML
     private TextArea logArea;
+    @FXML
+    protected StackPane gridWrapper;
 
+    private Simulator simulator;
+    private int servers = 1;
+    private int technicians = 2;
+    private int computers = 3;
+    private boolean print = true;
+    private int duration = 25;
+    private StopSimulationThread stopSimulation;
+    private static int matrixSize = 11;
+    private IntegerProperty cellSizeProperty = new SimpleIntegerProperty(25);
+
+
+    private GridPane matrix;
     private Label[][] field = new Label[matrixSize][matrixSize];
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        instance = this;
+
+        gridWrapper.widthProperty().addListener(gridWrapperSizeChangeListener);
+        gridWrapper.heightProperty().addListener(gridWrapperSizeChangeListener);
+        matrix = prepareGridPane();
+        gridWrapper.getChildren().add(matrix);
+
         handleSteps();
         handleLogs();
         handleCounts();
         handleMatrix();
     }
+    private ChangeListener<Number> gridWrapperSizeChangeListener = (observable, oldValue, newValue) -> {
 
+        if (gridWrapper.getBoundsInLocal().getWidth() > gridWrapper.getBoundsInLocal().getHeight()) {
+            cellSizeProperty.set(new Double(gridWrapper.getHeight() / matrixSize).intValue());
+        } else {
+            cellSizeProperty.set(new Double(gridWrapper.getWidth() / matrixSize).intValue());
+        }
+    };
+
+    private GridPane prepareGridPane() {
+        GridPane ret = new GridPane();
+        ret.prefWidthProperty().bind(cellSizeProperty);
+        ret.prefHeightProperty().bind(cellSizeProperty);
+        ret.maxWidthProperty().bind(ret.prefWidthProperty());
+        ret.maxHeightProperty().bind(ret.prefHeightProperty());
+
+        ret.setGridLinesVisible(true);
+
+        ret.getStyleClass().add("grid");
+        for (int i = 0; i < matrixSize; i++) {
+            ColumnConstraints colConst = new ColumnConstraints();
+            colConst.prefWidthProperty().bind(cellSizeProperty);
+            // colConst.setFillWidth(true);
+            colConst.minWidthProperty().bind(cellSizeProperty);
+            ret.getColumnConstraints().add(colConst);
+        }
+        for (int i = 0; i < matrixSize; i++) {
+            RowConstraints rowConst = new RowConstraints();
+            rowConst.prefHeightProperty().bind(cellSizeProperty);
+            // rowConst.setFillHe(true);
+            rowConst.minHeightProperty().bind(cellSizeProperty);
+            ret.getRowConstraints().add(rowConst);
+        }
+
+//        for (int row = 0; row < matrixSize; row++) {
+//            for (int col = 0; col < matrixSize; col++) {
+//                Label component = createEntityMark();
+//                field[row][col] = component;
+//                ret.add(component, col, row);
+//            }
+//        }
+        Platform.runLater(() -> {
+            for (int i = 0; i < matrixSize; i++) {
+                for (int j = 0; j < matrixSize; j++) {
+                    field[i][j] = createEntityMark(new Label(""), null);
+                    matrix.add(field[i][j], j, i);
+                }
+            }
+        });
+
+
+        return ret;
+    }
+
+//    public Label createMyEntityMark() {
+//        Label label = new Label();
+//        label.setText("");
+//        //TODO
+//        label.prefWidthProperty().bind(cellSizeProperty);
+//        label.prefHeightProperty().bind(cellSizeProperty);
+//
+//        label.getStyleClass().clear();
+//        label.getStyleClass().add("cell");
+//
+//        return label;
+//    }
     private void handleSteps() {
         steps.setText(String.valueOf(duration));
         steps.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -95,12 +172,12 @@ public class Controller implements Initializable {
     }
 
     private void handleLogs() {
-        printLogs.setSelected(print);
-        printLogs.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            print = newValue;
-            runSimulation.setDisable(true);
-            takeAStep.setDisable(true);
-        });
+//        printLogs.setSelected(print);
+//        printLogs.selectedProperty().addListener((observable, oldValue, newValue) -> {
+//            print = newValue;
+//            runSimulation.setDisable(true);
+//            takeAStep.setDisable(true);
+//        });
     }
 
     private void handleCounts() {
@@ -134,32 +211,36 @@ public class Controller implements Initializable {
     }
 
     private void handleMatrix() {
-        matrix.getStyleClass().add("grid");
-        for (int i = 0; i < matrixSize; i++) {
-            ColumnConstraints colConst = new ColumnConstraints();
-            colConst.setPrefWidth(cellWidth);
-            matrix.getColumnConstraints().add(colConst);
-        }
-        for (int i = 0; i < matrixSize; i++) {
-            RowConstraints rowConst = new RowConstraints();
-            rowConst.setPrefHeight(cellHeight);
-            matrix.getRowConstraints().add(rowConst);
-        }
-        Platform.runLater(() -> {
-            for (int i = 0; i < matrixSize; i++) {
-                for (int j = 0; j < matrixSize; j++) {
-                    field[i][j] = createEntityMark(new Label (""), null);
-                    matrix.add(field[i][j], j, i);
-                }
-            }
-        });
+//        matrix.getStyleClass().add("grid");
+//        for (int i = 0; i < matrixSize; i++) {
+//            ColumnConstraints colConst = new ColumnConstraints();
+//            colConst.setPrefWidth(cellWidth);
+//           // colConst.setFillWidth(true);
+//            colConst.setMinWidth(cellWidth);
+//            matrix.getColumnConstraints().add(colConst);
+//        }
+//        for (int i = 0; i < matrixSize; i++) {
+//            RowConstraints rowConst = new RowConstraints();
+//            rowConst.setPrefHeight(cellHeight);
+//            rowConst.setMinHeight(cellWidth);
+//            matrix.getRowConstraints().add(rowConst);
+//        }
+//        Platform.runLater(() -> {
+//            for (int i = 0; i < matrixSize; i++) {
+//                for (int j = 0; j < matrixSize; j++) {
+//                    field[i][j] = createEntityMark(new Label (""), null);
+//                    matrix.add(field[i][j], j, i);
+//                }
+//            }
+//        });
     }
 
-    public static Label createEntityMark(Label old, Entity entity) {
+    public Label createEntityMark(Label old, Entity entity) {
         Label label = old;
         old.setText("");
-        label.setPrefWidth(cellWidth);
-        label.setPrefHeight(cellHeight);
+        label.prefWidthProperty().bind(cellSizeProperty);
+        label.prefHeightProperty().bind(cellSizeProperty);
+
         if (entity != null) {
             String name = entity.getName();
             String number = name.charAt(0) + "" + String.valueOf(validNumber(name));
@@ -240,7 +321,7 @@ public class Controller implements Initializable {
             for (int k = 0; k < matrixSize; k++) {
                 for (int j = 0; j < matrixSize; j++) {
                     Entity entity = simulator.getEnvironment().getEntityAt(k, j);
-                    field[k][j] = Controller.createEntityMark(field[k][j], entity);
+                    field[k][j] = createEntityMark(field[k][j], entity);
                 }
             }
         });
@@ -270,7 +351,7 @@ public class Controller implements Initializable {
     }
 
     private void setSettingsDisable(boolean set) {
-        printLogs.setDisable(set);
+       // printLogs.setDisable(set);
         countServers.setDisable(set);
         countTechnicians.setDisable(set);
         countComputers.setDisable(set);

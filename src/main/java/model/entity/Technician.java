@@ -1,9 +1,10 @@
 package model.entity;
 
-import model.Counter;
-import model.Environment;
-import model.Location;
-import model.Randomizer;
+import app.Controller;
+import javafx.geometry.Point2D;
+import lombok.Getter;
+import lombok.Setter;
+import model.*;
 import model.log.WorkLog;
 
 import java.util.ArrayList;
@@ -91,6 +92,8 @@ public class Technician extends Entity implements Comparable {
         computer.assign();
         assignment = computer;
         available = false;
+
+
         report(String.format("Got an assignment, bummer... Now at %s and gotta go to %s.", getLocation(), assignment.getLocation()));
     }
 
@@ -134,7 +137,90 @@ public class Technician extends Entity implements Comparable {
                 Location diff = getLocation().diff(location);
             }
             */
-        takeShortcut(location);
+
+        //takeShortcut(location);
+
+        ;
+        List<MyPoint> pointsToTarget = computePointsToTarget(
+                this.getLocation().getCol(),
+                this.getLocation().getRow(),
+                location.getCol(),
+                location.getRow()
+        );
+        setPath(new Path(pointsToTarget));
+
+
+        if (path.getPath().size() > 0) {
+            setLocation(path.getPath().get(1).getY(), path.getPath().get(1).getX());
+        } else {
+        }
+
+
+//        List<MyPoint> pointsToTarget = computePointsToTarget(
+//                this.getLocation().getCol(),
+//                this.getLocation().getRow(),
+//                location.getCol(),
+//                location.getRow());
+//
+//        setPath(new Path(pointsToTarget));
+//
+//        System.out.println("11111111111111111111111111111111111111111111111111> " + pathToComputer.size());
+//
+//        Location getTo = place;
+//        if (!location.equals(getTo)) {
+//            int row = pathToComputer.get(1).getY();
+//            int col =  pathToComputer.get(1).getX();
+//            getTo = new Location(row, col);
+//        }
+//        setLocation(getTo);
+//
+////        setLocation(
+////                new Double(pathToComputer.get(1).getX()).intValue(),
+////                new Double(pathToComputer.get(1).getY()).intValue());
+
+
+    }
+
+    @Setter
+    @Getter
+    private Path path = new Path(new ArrayList<MyPoint>());
+
+    List<MyPoint> computePointsToTarget(int x, int y, int x2, int y2) {
+        List<MyPoint> points = new ArrayList<>();
+
+        int w = x2 - x;
+        int h = y2 - y;
+        int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
+        if (w < 0) dx1 = -1;
+        else if (w > 0) dx1 = 1;
+        if (h < 0) dy1 = -1;
+        else if (h > 0) dy1 = 1;
+        if (w < 0) dx2 = -1;
+        else if (w > 0) dx2 = 1;
+        int longest = Math.abs(w);
+        int shortest = Math.abs(h);
+        if (!(longest > shortest)) {
+            longest = Math.abs(h);
+            shortest = Math.abs(w);
+            if (h < 0) dy2 = -1;
+            else if (h > 0) dy2 = 1;
+            dx2 = 0;
+        }
+        int numerator = longest >> 1;
+        for (int i = 0; i <= longest; i++) {
+
+            points.add(new MyPoint(x, y));
+            numerator += shortest;
+            if (!(numerator < longest)) {
+                numerator -= longest;
+                x += dx1;
+                y += dy1;
+            } else {
+                x += dx2;
+                y += dy2;
+            }
+        }
+        return points;
     }
 
     private void free() {

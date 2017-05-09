@@ -42,7 +42,7 @@ public class SimulationThread extends Thread {
             Platform.runLater(() -> {
                 for (int k = 0; k < simulator.getSize(); k++) {
                     for (int j = 0; j < simulator.getSize(); j++) {
-                        field[k][j] = Controller.createEntityMark(field[k][j], simulator.getEnvironment().getEntityAt(k, j));
+                        field[k][j] = Controller.instance.createEntityMark(field[k][j], simulator.getEnvironment().getEntityAt(k, j));
                     }
                 }
             });

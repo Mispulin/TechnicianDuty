@@ -1,5 +1,6 @@
 package model;
 
+import lombok.Getter;
 import model.entity.Entity;
 
 import java.util.Collections;
@@ -15,20 +16,14 @@ public class Environment {
     private static final Random rand = Randomizer.getRandom();
 
     private Entity[][] field;
+
+    @Getter
     private int height, width;
 
     public Environment(int height, int width) {
         this.height = height;
         this.width = width;
         field = new Entity[height][width];
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getWidth() {
-        return width;
     }
 
     public void clear() {

@@ -1,14 +1,60 @@
-.root {
-    -fx-font-size: 12pt;
-    -fx-font-family: "Arial";
-    -fx-base: rgb(100, 71, 145);
-    -fx-background: rgb(238, 238, 238);
-    -fx-border-color: transparent;
+@font-face {
+    -fx-font-family: 'Rob';
+    src: url('fonts/RobotoCondensed-Regular.ttf');
 }
 
+.rootComponent {
+    -fx-background-color: rgb(40, 40, 50);
+    -fx-font-size: 20px;
+}
+
+.btn {
+    -fx-padding: 10px 30px 10px 30px;
+    -fx-font-family: 'Rob';
+    -fx-background-color: #F44336;
+    -fx-font-size: 22px;
+    -fx-text-fill: rgba(255, 255, 255, 0.8);
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+}
+
+.btn:hover {
+    -fx-background-color: #ec4f44;
+}
+
+.lbl {
+    -fx-font-family: 'Rob';
+    -fx-font-size: 18px;
+    -fx-text-fill: rgba(255, 255, 255, 0.8);
+}
+
+.tf {
+    -fx-padding: 10px 30px 10px 30px;
+    -fx-font-family: 'Rob';
+    -fx-font-size: 22px;
+    -fx-text-fill: rgba(0, 0, 10, 0.8);
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+.headline{
+    -fx-font-size: 32px;
+}
+.btn:pressed {
+    -fx-background-color: #d8483d;
+}
+
+.consolePanel {
+    -fx-background-color: #3e3e64;
+}
+
+
 .grid, .cell, .server, .technician, .computer {
-    -fx-border-color: #696969;
-    -fx-border-width: 1px;
+    -fx-background-color: #3e3e64;
+}
+
+.cell{
+    -fx-background-color: transparent;
 }
 
 .server, .technician, .computer {
@@ -18,20 +64,46 @@
 
 .server {
     -fx-background-color: #535257;
+    -fx-background-image: url('images/boss.png');
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 40px;
+    -fx-background-position: center;
 }
 
 .technician {
     -fx-background-color: #0478bf;
+    -fx-background-image: url('images/nerd.png');
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 40px;
+    -fx-background-position: center;
 }
 
 .computer {
     -fx-background-color: #01a346;
+    -fx-background-image: url('images/pc.png');
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 40px;
+    -fx-background-position: center;
 }
-
 .computer.broken {
     -fx-background-color: #8f1e0e;
 }
+.log{
+    -fx-background-color: transparent;
+    -fx-font-family: 'Rob';
+    -fx-font-size: 18px;
+    -fx-text-fill: rgba(255, 255, 255, 0.8);
+}
 
-.logArea {
-    -fx-font-family: monospace;
+.log .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.log .scroll-pane .viewport{
+    -fx-background-color: transparent;
+}
+
+
+.log .scroll-pane .content{
+    -fx-background-color: transparent;
 }
