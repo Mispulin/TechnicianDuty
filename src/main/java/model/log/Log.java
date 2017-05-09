@@ -1,5 +1,6 @@
 package model.log;
 
+import app.Controller;
 import model.entity.Entity;
 
 /**
@@ -31,6 +32,7 @@ public class Log {
     }
 
     public void print() {
+        Controller.instance.getLogArea().appendText(this.toString()+"\n");
         System.out.println(this.toString());
     }
 

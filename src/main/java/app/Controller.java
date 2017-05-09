@@ -14,6 +14,7 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import lombok.Getter;
 import model.Counter;
 import app.thread.SimulationThread;
 import app.thread.GuiThread;
@@ -52,6 +53,7 @@ public class Controller implements Initializable {
     private Button setupSimulation;
     @FXML
     private Label step;
+    @Getter
     @FXML
     private TextArea logArea;
     @FXML
