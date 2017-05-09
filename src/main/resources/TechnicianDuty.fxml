@@ -60,13 +60,13 @@
                      </rowConstraints>
                      <children>
                         <Label styleClass="lbl" text="Servery" />
-                        <TextField fx:id="countServers" styleClass="tf" text="2" GridPane.columnIndex="1" />
+                        <TextField fx:id="countServers" styleClass="tf" GridPane.columnIndex="1" />
                         <Label styleClass="lbl" text="Počítače" GridPane.rowIndex="2" />
-                        <TextField fx:id="countComputers" prefWidth="308.0" styleClass="tf" text="2" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <TextField fx:id="countComputers" prefWidth="308.0" styleClass="tf" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <Label styleClass="lbl" text="Technici" GridPane.rowIndex="1" />
-                        <TextField fx:id="countTechnicians" styleClass="tf" text="2" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="countTechnicians" styleClass="tf" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label styleClass="lbl" text="Počet kroků" GridPane.rowIndex="3" />
-                        <TextField fx:id="steps" prefWidth="303.0" styleClass="tf" text="10" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <TextField fx:id="steps" prefWidth="303.0" styleClass="tf" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                      </children>
                   </GridPane>
                   <HBox alignment="TOP_RIGHT" fillHeight="false" prefWidth="200.0">
