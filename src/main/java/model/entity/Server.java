@@ -171,7 +171,11 @@ public class Server extends Entity implements ServerListener {
         currentTasks.forEach(task -> System.out.println(task.getTechnician().getName() + " has " + task.getComputer().getName() + "."));
     }
 
+    public String toString() {
+        return String.format("%-13s %s", getName(), getLocation().toString());
+    }
+
     public void print() {
-        System.out.println(String.format("%-13s %s", getName(), getLocation().toString()));
+        System.out.println(this.toString());
     }
 }

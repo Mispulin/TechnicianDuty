@@ -33,7 +33,7 @@ public class Log {
 
     public void print() {
         Controller.instance.getLogArea().appendText(this.toString()+"\n");
-        System.out.println(this.toString());
+        // System.out.println(this.toString());
     }
 
 }

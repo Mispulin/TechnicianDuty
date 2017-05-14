@@ -156,8 +156,12 @@ public class Computer extends Entity implements Comparable {
         return working;
     }
 
+    public String toString() {
+        return String.format("%-15s age: %-5d %s, %s", getName(), getAge(), getLocation().toString(), server.getName());
+    }
+
     public void print() {
-        System.out.println(String.format("%-15s age: %-5d %s, %s", getName(), getAge(), getLocation().toString(), server.getName()));
+        System.out.println(this.toString());
     }
 
     @Override

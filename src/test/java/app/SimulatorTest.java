@@ -30,7 +30,7 @@ public class SimulatorTest {
         int countServers = 1;
         int countTechnicians = 2;
         int countComputers = 4;
-        Simulator simulator = new Simulator(countServers, countTechnicians, countComputers, false);
+        Simulator simulator = new Simulator(countServers, countTechnicians, countComputers);
         simulator.simulateOneStep();
         if (LOG) simulator.print(simulator.getEntities());
         assertTrue(simulator.getEntities().size() == (countServers + countTechnicians + countComputers));
@@ -56,13 +56,13 @@ public class SimulatorTest {
 
     @Test
     public void longSimulation() {
-        Simulator simulator = new Simulator(1, 2, 6, false);
+        Simulator simulator = new Simulator(1, 2, 6);
         simulator.runLongSimulation();
     }
 
     @Test
     public void longerSimulation() {
-        Simulator simulator = new Simulator(1, 2, 3, false);
+        Simulator simulator = new Simulator(1, 2, 3);
         simulator.simulate(1000);
     }
 
@@ -97,7 +97,7 @@ public class SimulatorTest {
 
     @Test
     public void correctCounts() {
-        Simulator simulator = new Simulator(2, 10, 20, false);
+        Simulator simulator = new Simulator(2, 10, 20);
         simulator.simulate(200);
 /*
         System.out.println(simulator.getServers().size());
@@ -112,7 +112,7 @@ public class SimulatorTest {
 
     @Test
     public void printCurrentTasks() {
-        Simulator simulator = new Simulator(1, 3, 7, false);
+        Simulator simulator = new Simulator(1, 3, 7);
         simulator.simulate(500);
         System.out.println();
         if (LOG) simulator.getServers().get(0).printCurrentTasks();
@@ -120,7 +120,7 @@ public class SimulatorTest {
 
     @Test
     public void correctCurrentTasks() {
-        Simulator simulator = new Simulator(1, 2, 6, false);
+        Simulator simulator = new Simulator(1, 2, 6);
         simulator.simulate(50);
         List<AssignmentItem<Computer, Technician>> tasks = simulator.getServers().get(0).getCurrentTasks();
         simulator.getTechnicians().forEach(technician -> {
@@ -141,14 +141,14 @@ public class SimulatorTest {
 
     @Test
     public void printField() {
-        Simulator simulator = new Simulator(1, 2, 3, false);
+        Simulator simulator = new Simulator(1, 2, 3);
         simulator.simulate(25);
         simulator.getEnvironment().print();
     }
 
     @Test
     public void printEntities() {
-        Simulator simulator = new Simulator(1, 2, 3, false);
+        Simulator simulator = new Simulator(1, 2, 3);
         simulator.simulate(25);
         simulator.print(simulator.getEntities());
     }

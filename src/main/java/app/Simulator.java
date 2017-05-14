@@ -43,19 +43,17 @@ public class Simulator {
         setup();
     }
 
-    public Simulator(int serv, int tech, int comp, boolean report) {
+    public Simulator(int serv, int tech, int comp) {
         countTechnicians = tech;
         countComputers = comp;
         countServers = serv;
-        LOG = report;
         setup();
     }
 
-    public Simulator(int newSize, int serv, int tech, int comp, boolean report) {
+    public Simulator(int newSize, int serv, int tech, int comp) {
         countTechnicians = tech;
         countComputers = comp;
         countServers = serv;
-        LOG = report;
         size = newSize;
         environment = new Environment(size, size);
         setup();
@@ -98,7 +96,7 @@ public class Simulator {
     }
 
     public void simulateOneStep() {
-        if (LOG) System.out.println("\nStep " + step + "\n");
+        // if (LOG) System.out.println("\nStep " + step + "\n");
         List<Entity> newEntities = new ArrayList<>();
         entities = sortEntitiesByType();
         for(Iterator<Entity> it = entities.iterator(); it.hasNext(); ) {
@@ -165,24 +163,25 @@ public class Simulator {
             entities.add(server);
             servers.add(server);
             usedLocations.add(new Location(row, col));
-            if (LOG) server.print();
         }
 
         for (int i = 0; i < countTechnicians; i++) {
-            Server boss = servers.get(rand.nextInt(countServers ));
+            Server boss = i < servers.size() ? servers.get(i) : servers.get(rand.nextInt(countServers ));
             do {
                 row = rand.nextInt(size - 1);
                 col = rand.nextInt(size - 1);
-
             } while (usedLocations.contains(new Location(row, col)));
             Technician technician = new Technician(environment, new Location(row, col), boss, LOG);
             entities.add(technician);
             usedLocations.add(new Location(row, col));
             usedLocations.add(new Location(row, col - 1));
-            usedLocations.add(new Location(row, col - 1));
+            usedLocations.add(new Location(row, col + 1));
             usedLocations.add(new Location(row - 1, col));
             usedLocations.add(new Location(row + 1, col));
-            if (LOG) technician.print();
+            usedLocations.add(new Location(row - 1, col - 1));
+            usedLocations.add(new Location(row + 1, col + 1));
+            usedLocations.add(new Location(row - 1, col + 1));
+            usedLocations.add(new Location(row + 1, col - 1));
         }
 
         int i = 0;
@@ -193,15 +192,18 @@ public class Simulator {
                 col = rand.nextInt(size - 1);
 
             } while (usedLocations.contains(new Location(row, col)));
-            Server boss = servers.get(rand.nextInt(countServers ));
+            Server boss = i < servers.size() ? servers.get(i) : servers.get(rand.nextInt(countServers ));
             Computer computer = new Computer(environment, new Location(row, col), boss, LOG);
             entities.add(computer);
             usedLocations.add(new Location(row, col));
             usedLocations.add(new Location(row, col - 1));
-            usedLocations.add(new Location(row, col - 1));
+            usedLocations.add(new Location(row, col + 1));
             usedLocations.add(new Location(row - 1, col));
             usedLocations.add(new Location(row + 1, col));
-            if (LOG) computer.print();
+            usedLocations.add(new Location(row - 1, col - 1));
+            usedLocations.add(new Location(row + 1, col + 1));
+            usedLocations.add(new Location(row - 1, col + 1));
+            usedLocations.add(new Location(row + 1, col - 1));
         }
     }
 

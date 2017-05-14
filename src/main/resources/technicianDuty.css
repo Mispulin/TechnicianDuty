@@ -88,7 +88,8 @@
 .computer.broken {
     -fx-background-color: #8f1e0e;
 }
-.log{
+
+.log {
     -fx-background-color: transparent;
     -fx-font-family: 'Rob';
     -fx-font-size: 18px;

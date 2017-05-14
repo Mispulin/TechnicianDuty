@@ -119,29 +119,8 @@ public class Technician extends Entity implements Comparable {
     }
 
     private void go(Location location) {
-            /*
-            if ((getLocation().getRow() == location.getRow())) {
-                if (getLocation().getCol() < location.getCol()) {
-                    goRight();
-                } else {
-                    goLeft();
-                }
-            } else if ((getLocation().getCol() == location.getCol())) {
-                if (getLocation().getRow() < location.getRow()) {
-                    goUp();
-                } else {
-                    goDown();
-                }
-            } else {
-                // not the same row or column so pick the lower distance and then the higher
-                Location diff = getLocation().diff(location);
-            }
-            */
-
-        //takeShortcut(location);
-
-        ;
-        List<MyPoint> pointsToTarget = computePointsToTarget(
+        takeShortcut(location);
+        /*List<MyPoint> pointsToTarget = computePointsToTarget(
                 this.getLocation().getCol(),
                 this.getLocation().getRow(),
                 location.getCol(),
@@ -152,33 +131,7 @@ public class Technician extends Entity implements Comparable {
 
         if (path.getPath().size() > 0) {
             setLocation(path.getPath().get(1).getY(), path.getPath().get(1).getX());
-        } else {
-        }
-
-
-//        List<MyPoint> pointsToTarget = computePointsToTarget(
-//                this.getLocation().getCol(),
-//                this.getLocation().getRow(),
-//                location.getCol(),
-//                location.getRow());
-//
-//        setPath(new Path(pointsToTarget));
-//
-//        System.out.println("11111111111111111111111111111111111111111111111111> " + pathToComputer.size());
-//
-//        Location getTo = place;
-//        if (!location.equals(getTo)) {
-//            int row = pathToComputer.get(1).getY();
-//            int col =  pathToComputer.get(1).getX();
-//            getTo = new Location(row, col);
-//        }
-//        setLocation(getTo);
-//
-////        setLocation(
-////                new Double(pathToComputer.get(1).getX()).intValue(),
-////                new Double(pathToComputer.get(1).getY()).intValue());
-
-
+        }*/
     }
 
     @Setter
@@ -290,8 +243,12 @@ public class Technician extends Entity implements Comparable {
         setLocation(getTo);
     }
 
+    public String toString() {
+        return String.format("%-15s exp: %-5d %s, %s", getName(), getExperience(), getLocation().toString(), boss.getName());
+    }
+
     public void print() {
-        System.out.println(String.format("%-15s exp: %-5d %s, %s", getName(), getExperience(), getLocation().toString(), boss.getName()));
+        System.out.println(this.toString());
     }
 
     @Override
